@@ -18,8 +18,8 @@
 	},
 	
 	"generateMipmapsDefault": true,
-	"scaleModeMagDefault": "GL_LINEAR",
-	"scaleModeMinDefault": "GL_LINEAR_MIPMAP_LINEAR",
+	"scaleModeMagDefault": "GL_NEAREST",
+	"scaleModeMinDefault": "GL_NEAREST",
 	
 	"rngSeed": 0,
 	"nodeCounting": true,

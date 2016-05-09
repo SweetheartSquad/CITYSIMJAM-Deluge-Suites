@@ -1,3 +1,15 @@
 {
-  "assets": []
+  "assets": [
+  	{
+  		"type": "mesh",
+  		"id": "ROOM_1",
+  		"src": "rooms/room1.obj"
+  	},
+  	{
+  		"type": "texture",
+  		"id": "ROOM_1",
+  		"src": "room1.png"
+  	}
+
+  ]
 }
