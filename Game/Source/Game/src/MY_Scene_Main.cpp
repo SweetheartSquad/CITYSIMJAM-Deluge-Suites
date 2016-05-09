@@ -82,15 +82,12 @@ void MY_Scene_Main::update(Step * _step){
 		}
 	}
 	// scroll floors
-	if(keyboard->keyJustDown(GLFW_KEY_UP) || keyboard->keyJustDown(GLFW_KEY_W)){
+	if(keyboard->keyJustDown(GLFW_KEY_UP) || keyboard->keyJustDown(GLFW_KEY_W) || mouse->getMouseWheelDelta() > 0.5f){
 		currentFloor += 1;
-	}if(keyboard->keyJustDown(GLFW_KEY_DOWN) || keyboard->keyJustDown(GLFW_KEY_S)){
+	}if(keyboard->keyJustDown(GLFW_KEY_DOWN) || keyboard->keyJustDown(GLFW_KEY_S) || mouse->getMouseWheelDelta() < -0.5f){
 		if(currentFloor > 0){
 			currentFloor -= 1;
 		}
-	}
-	if(glm::abs(mouse->getMouseWheelDelta()) > FLT_EPSILON){
-		currentFloor += 1*glm::sign(mouse->getMouseWheelDelta());
 	}
 }
 
