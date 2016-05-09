@@ -1,6 +1,7 @@
 #pragma once
 
 #include <MY_Scene_Base.h>
+#include <Floor.h>
 
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
@@ -13,8 +14,7 @@ public:
 	int angle;
 	float currentAngle;
 	
-	std::vector<Transform *> floors;
-	std::vector<MeshEntity *> covers;
+	std::vector<Floor *> floors;
 
 	MY_Scene_Main(Game * _game);
 	~MY_Scene_Main();

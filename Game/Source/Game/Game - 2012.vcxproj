@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Floor.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MY_Game.cpp" />
     <ClCompile Include="src\MY_ResourceManager.cpp" />
@@ -24,6 +25,7 @@
     <ClCompile Include="src\MY_Scene_VR.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Floor.h" />
     <ClInclude Include="include\MY_Game.h" />
     <ClInclude Include="include\MY_ResourceManager.h" />
     <ClInclude Include="include\MY_Scene_Base.h" />

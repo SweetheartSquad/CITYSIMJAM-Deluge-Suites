@@ -6,6 +6,18 @@
   		"src": "rooms/room1.obj"
   	},
   	{
+  		"type": "mesh",
+  		"id": "stairs",
+  		"src": "rooms/stairs.obj"
+  	},
+  	{
+  		"type": "mesh",
+  		"id": "support",
+  		"src": "rooms/support.obj"
+  	},
+
+
+  	{
   		"type": "texture",
   		"id": "ROOM_1",
   		"src": "room1.png"

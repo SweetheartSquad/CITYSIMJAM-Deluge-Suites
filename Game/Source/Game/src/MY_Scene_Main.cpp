@@ -14,19 +14,25 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
 	activeCamera = gameCam;
+	
+	sweet::ShuffleVector<MeshInterface *> meshes;
+	MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	MY_ResourceManager::globalAssets->getMesh("stairs")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	MY_ResourceManager::globalAssets->getMesh("support")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
 
-	MeshInterface * cubeMesh = MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0);//MeshFactory::getCubeMesh();
-	cubeMesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	meshes.push(MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0));
+	meshes.push(MY_ResourceManager::globalAssets->getMesh("stairs")->meshes.at(0));
+	meshes.push(MY_ResourceManager::globalAssets->getMesh("support")->meshes.at(0));
 	for(unsigned long int y = 0; y < 10; ++y){
-		Transform * floor = new Transform();
+		Floor * floor = new Floor(y, baseShader);
 		childTransform->addChild(floor, false);
 		floor->translate(-2, y, -2);
 		floors.push_back(floor);
 	for(unsigned long int x = 0; x < 4; ++x){
 	for(unsigned long int z = 0; z < 4; ++z){
 		if(sweet::NumberUtils::randomBool()){
-			MeshEntity * cube = new MeshEntity(cubeMesh, baseShader);
-			floor->addChild(cube)->translate(x, 0, z);
+			MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
+			floor->cellContainer->addChild(cube)->translate(x, 0, z);
 		}
 	}
 	}
@@ -45,11 +51,7 @@ MY_Scene_Main::~MY_Scene_Main(){
 
 void MY_Scene_Main::update(Step * _step){
 	for(unsigned long int i = 0; i < floors.size(); ++i){
-		if(currentFloor < i){
-			floors.at(i)->setVisible(false);
-		}else{
-			floors.at(i)->setVisible(true);
-		}
+		floors.at(i)->updateVisibility(currentFloor);
 	}
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	camPos.y += ((currentFloor-3.f) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
