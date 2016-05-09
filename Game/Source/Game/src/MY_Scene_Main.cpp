@@ -50,6 +50,12 @@ MY_Scene_Main::~MY_Scene_Main(){
 
 
 void MY_Scene_Main::update(Step * _step){
+	glm::uvec2 sd = sweet::getWindowDimensions();
+	float ar = (float)sd.y / sd.x;
+	gameCam->bottom = 16*ar * -0.5f;
+	gameCam->top = 16*ar*0.5f;
+
+
 	for(unsigned long int i = 0; i < floors.size(); ++i){
 		floors.at(i)->updateVisibility(currentFloor);
 	}
