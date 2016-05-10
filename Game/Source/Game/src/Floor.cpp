@@ -16,6 +16,13 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 		wallContainer->addChild(wall)->translate(GRID_SIZE_X/2.f,0,GRID_SIZE_Z/2.f)->rotate(i*90.f,0,1,0,kOBJECT);
 		walls.push_back(wall);
 	}
+	
+	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
+		cells[x][z] = new Cell();
+		cells[x][z]->building = nullptr;
+	}
+	}
 }
 
 Floor::~Floor(){

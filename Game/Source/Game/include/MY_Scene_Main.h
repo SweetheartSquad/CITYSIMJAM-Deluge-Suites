@@ -8,6 +8,7 @@ class MY_Scene_Main : public MY_Scene_Base{
 public:
 	OrthographicCamera * gameCam;
 
+	std::string currentType;
 
 	// the floor which the player is looking at
 	int currentFloor;

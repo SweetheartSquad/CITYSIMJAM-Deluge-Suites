@@ -5,11 +5,16 @@
 #include <NumberUtils.h>
 #include <RenderOptions.h>
 
+#include <sweet/UI.h>
+
+#include <Building.h>
+
 MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
 	currentFloor(0),
 	angle(0),
-	currentAngle(0)
+	currentAngle(0),
+	currentType("")
 {
 	gameCam = new OrthographicCamera(-8,8, -4.5,4.5, -100,100);
 	cameras.push_back(gameCam);
@@ -38,6 +43,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 				if(sweet::NumberUtils::randomBool()){
 					MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
 					floor->cellContainer->addChild(cube)->translate(x, 0, z);
+					floor->cells[x][z]->building = cube;
 				}
 			}
 		}
@@ -52,6 +58,23 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	selectorThing = new MeshEntity(MeshFactory::getCubeMesh(), baseShader);
 	childTransform->addChild(selectorThing);
+
+
+
+	// ui stuff
+	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
+	uiLayer->addChild(vl);
+
+	for(auto b : MY_ResourceManager::buildings->assets.at("building")){
+		TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
+		vl->addChild(btn);
+		btn->setMouseEnabled(true);
+		btn->setText(b.first);
+		btn->eventManager->addEventListener("click", [this, b](sweet::Event * _event){
+			currentType = b.first;
+		});
+
+	}
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -84,6 +107,18 @@ void MY_Scene_Main::update(Step * _step){
 			Cell * cell = floor->cells[cursorPos.x][cursorPos.z];
 			
 			// do something with the cell
+
+			if(cell->building == nullptr){
+				if(currentType != ""){
+					Building * b = new Building(MY_ResourceManager::getBuilding(currentType), baseShader);
+					floor->cellContainer->addChild(b)->translate(cursorPos.x, 0, cursorPos.z, false);
+					cell->building = b;
+				}
+			}else{
+				floor->cellContainer->removeChild(cell->building->firstParent());
+				delete cell->building->firstParent();
+				cell->building = nullptr;
+			}
 		}
 	}
 
