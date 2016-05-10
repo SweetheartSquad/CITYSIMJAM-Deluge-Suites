@@ -14,6 +14,8 @@ public:
 	int angle;
 	float currentAngle;
 	
+	MeshEntity * selectorThing;
+
 	std::vector<Floor *> floors;
 
 	MY_Scene_Main(Game * _game);

@@ -41,12 +41,16 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 			}
 		}
 	}
-	}
-	}
 
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
+
+
+	sweet::setCursorMode(GLFW_CURSOR_NORMAL);
+
+	selectorThing = new MeshEntity(MeshFactory::getCubeMesh(), baseShader);
+	childTransform->addChild(selectorThing);
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -56,24 +60,39 @@ MY_Scene_Main::~MY_Scene_Main(){
 
 
 void MY_Scene_Main::update(Step * _step){
+	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	float ar = (float)sd.y / sd.x;
 	gameCam->bottom = 16*ar * -0.5f;
 	gameCam->top = 16*ar*0.5f;
 
+	// calculate in-game isometric cursor position
+	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
+	glm::vec3 start = gameCam->screenToWorld(glm::vec3(mouse->mouseX()/sd.x, mouse->mouseY()/sd.y, gameCam->nearClip), sd);
+	glm::vec3 dir = gameCam->forwardVectorRotated;
+	glm::vec3 norm(0,1,0);
+	glm::vec3 cursorPos(0,currentFloor-1.f,0);
+
+	float d = glm::dot(norm, dir);
+	if(glm::abs(d) > FLT_EPSILON){
+		float t = glm::dot(glm::vec3(0,currentFloor,0) - start, norm) / d;
+		if(glm::abs(t) > FLT_EPSILON){
+			cursorPos = start + dir * t;
+		}
+	}
+	cursorPos = glm::floor(cursorPos) + glm::vec3(0.5);
+	cursorPos.y = currentFloor + 0.5f;
+	selectorThing->firstParent()->translate(cursorPos, false);
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
 		floors.at(i)->updateVisibility(currentFloor, angle);
 	}
-	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
-	camPos.y += ((currentFloor-3.f) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
+	camPos.y += ((currentFloor) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
 
-	float d = (angle*90.f - currentAngle);
+	float angleDif = ((angle+0.5f)*90.f - currentAngle);
 
-	currentAngle += d * 0.1f;
-	gameCam->yaw = currentAngle-45.f;
-	camPos.x = glm::sin(glm::radians(currentAngle)) * 5;
-	camPos.z = glm::cos(glm::radians(currentAngle)) * 5;
+	currentAngle += angleDif * 0.1f;
+	gameCam->yaw = currentAngle;
 	gameCam->firstParent()->translate(camPos, false);
 
 	// Scene update
