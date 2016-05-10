@@ -2,8 +2,8 @@
 
 #include <MeshEntity.h>
 
-#define GRID_SIZE_X 16
-#define GRID_SIZE_Z 16//(GRID_SIZE_X)
+#define GRID_SIZE_X 4
+#define GRID_SIZE_Z (GRID_SIZE_X)
 
 class Cell : public Node{
 public:
