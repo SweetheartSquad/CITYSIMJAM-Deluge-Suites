@@ -84,6 +84,12 @@ void MY_Scene_Main::update(Step * _step){
 	cursorPos.y = currentFloor + 0.5f;
 	selectorThing->firstParent()->translate(cursorPos, false);
 
+	if(mouse->leftJustPressed()){
+		std::stringstream ss;
+		ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x+1.5 << " " << cursorPos.z+1.5;
+		Log::info(ss.str());
+	}
+
 	for(unsigned long int i = 0; i < floors.size(); ++i){
 		floors.at(i)->updateVisibility(currentFloor, angle);
 	}
