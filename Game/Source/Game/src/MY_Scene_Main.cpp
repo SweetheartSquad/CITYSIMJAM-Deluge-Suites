@@ -130,6 +130,13 @@ void MY_Scene_Main::update(Step * _step){
 	}
 }
 
+
+void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _renderOptions){
+	_renderOptions->setClearColour(1,1,0,1);
+	// render the scene
+	MY_Scene_Base::render(_matrixStack, _renderOptions);
+}
+
 void MY_Scene_Main::enableDebug(){
 	MY_Scene_Base::enableDebug();
 }

@@ -22,6 +22,7 @@ public:
 	~MY_Scene_Main();
 
 	virtual void update(Step * _step) override;
+	virtual void render(sweet::MatrixStack * _matrixStack, RenderOptions * _renderOptions) override;
 	
 	// overriden to add physics debug drawing
 	virtual void enableDebug() override;
