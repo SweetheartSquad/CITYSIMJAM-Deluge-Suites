@@ -28,4 +28,8 @@ public:
 	virtual void enableDebug() override;
 	// overriden to remove physics debug drawing
 	virtual void disableDebug() override;
+
+
+	// returns the isometric cursor position
+	glm::ivec3 getIsometricCursorPos();
 };

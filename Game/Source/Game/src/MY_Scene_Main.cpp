@@ -3,6 +3,7 @@
 #include <MY_Scene_Main.h>
 #include <MeshFactory.h>
 #include <NumberUtils.h>
+#include <RenderOptions.h>
 
 MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
@@ -65,29 +66,25 @@ void MY_Scene_Main::update(Step * _step){
 	float ar = (float)sd.y / sd.x;
 	gameCam->bottom = 16*ar * -0.5f;
 	gameCam->top = 16*ar*0.5f;
-
-	// calculate in-game isometric cursor position
+	
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
-	glm::vec3 start = gameCam->screenToWorld(glm::vec3(mouse->mouseX()/sd.x, mouse->mouseY()/sd.y, gameCam->nearClip), sd);
-	glm::vec3 dir = gameCam->forwardVectorRotated;
-	glm::vec3 norm(0,1,0);
-	glm::vec3 cursorPos(0,currentFloor-1.f,0);
-
-	float d = glm::dot(norm, dir);
-	if(glm::abs(d) > FLT_EPSILON){
-		float t = glm::dot(glm::vec3(0,currentFloor,0) - start, norm) / d;
-		if(glm::abs(t) > FLT_EPSILON){
-			cursorPos = start + dir * t;
-		}
-	}
-	cursorPos = glm::floor(cursorPos) + glm::vec3(0.5);
-	cursorPos.y = currentFloor + 0.5f;
-	selectorThing->firstParent()->translate(cursorPos, false);
+	glm::ivec3 cursorPos = getIsometricCursorPos();
+	
+	//selectorThing->firstParent()->translate(cursorPos, false);
 
 	if(mouse->leftJustPressed()){
 		std::stringstream ss;
-		ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x+1.5 << " " << cursorPos.z+1.5;
+		ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z;
 		Log::info(ss.str());
+
+		// make sure the cursor is within bounds
+		if(cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X &&
+			cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z){
+			Floor * floor = floors.at(cursorPos.y);
+			Cell * cell = floor->cells[cursorPos.x][cursorPos.z];
+			
+			// do something with the cell
+		}
 	}
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
@@ -142,4 +139,24 @@ void MY_Scene_Main::enableDebug(){
 }
 void MY_Scene_Main::disableDebug(){
 	MY_Scene_Base::disableDebug();
+}
+
+
+glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
+	// calculate in-game isometric cursor position
+	glm::uvec2 sd = sweet::getWindowDimensions();
+	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
+	glm::vec3 start = gameCam->screenToWorld(glm::vec3(mouse->mouseX()/sd.x, mouse->mouseY()/sd.y, gameCam->nearClip), sd);
+	glm::vec3 dir = gameCam->forwardVectorRotated;
+	glm::vec3 norm(0,1,0);
+	glm::vec3 cursorPos(0);
+
+	float d = glm::dot(norm, dir);
+	if(glm::abs(d) > FLT_EPSILON){
+		float t = glm::dot(glm::vec3(0,currentFloor,0) - start, norm) / d;
+		if(glm::abs(t) > FLT_EPSILON){
+			cursorPos = start + dir * t;
+		}
+	}
+	return glm::ivec3( glm::floor(cursorPos.x) + 2, currentFloor, glm::floor(cursorPos.z) + 2 );
 }
