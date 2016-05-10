@@ -2,7 +2,13 @@
 
 #include <MeshEntity.h>
 
-class Cell;
+#define GRID_SIZE_X 16
+#define GRID_SIZE_Z 16//(GRID_SIZE_X)
+
+class Cell : public Node{
+public:
+	MeshEntity * building;
+};
 
 class Floor : public Transform{
 public:
@@ -11,7 +17,9 @@ public:
 	
 	Transform * cellContainer;
 	Transform * wallContainer;
-	Cell * cells[4][4];
+
+	// access is [x][z]
+	Cell * cells[GRID_SIZE_X][GRID_SIZE_Z];
 	
 	Floor(unsigned long int _height, Shader * _shader);
 	~Floor();

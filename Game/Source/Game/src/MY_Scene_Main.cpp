@@ -26,14 +26,14 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	Transform * building = new Transform();
 	childTransform->addChild(building, false);
-	building->translate(-2, 0, -2);
+	building->translate(-GRID_SIZE_X/2.f, 0, -GRID_SIZE_Z/2.f);
 	for(unsigned long int y = 0; y < 10; ++y){
 		Floor * floor = new Floor(y, baseShader);
 		building->addChild(floor, false);
 		floor->translate(0, y, 0);
 		floors.push_back(floor);
-		for(unsigned long int x = 0; x < 4; ++x){
-			for(unsigned long int z = 0; z < 4; ++z){
+		for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
+			for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
 				if(sweet::NumberUtils::randomBool()){
 					MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
 					floor->cellContainer->addChild(cube)->translate(x, 0, z);

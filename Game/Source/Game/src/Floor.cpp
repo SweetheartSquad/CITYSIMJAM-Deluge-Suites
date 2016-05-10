@@ -13,13 +13,17 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 	MeshInterface * wallMesh = MY_ResourceManager::globalAssets->getMesh("wall")->meshes.at(0);
 	for(unsigned long int i = 0; i < 4; ++i){
 		MeshEntity * wall = new MeshEntity(wallMesh, _shader);
-		wallContainer->addChild(wall)->translate(2,0,2)->rotate(i*90.f,0,1,0,kOBJECT);
+		wallContainer->addChild(wall)->translate(GRID_SIZE_X/2.f,0,GRID_SIZE_Z/2.f)->rotate(i*90.f,0,1,0,kOBJECT);
 		walls.push_back(wall);
 	}
 }
 
 Floor::~Floor(){
-
+	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
+		delete cells[x][z];
+	}
+	}
 }
 
 void Floor::updateVisibility(unsigned long int _height, unsigned long int _angle){
