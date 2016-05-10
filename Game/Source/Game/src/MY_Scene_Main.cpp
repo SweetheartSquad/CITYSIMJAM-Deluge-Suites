@@ -23,16 +23,22 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	meshes.push(MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0));
 	meshes.push(MY_ResourceManager::globalAssets->getMesh("stairs")->meshes.at(0));
 	meshes.push(MY_ResourceManager::globalAssets->getMesh("support")->meshes.at(0));
+
+	Transform * building = new Transform();
+	childTransform->addChild(building, false);
+	building->translate(-2, 0, -2);
 	for(unsigned long int y = 0; y < 10; ++y){
 		Floor * floor = new Floor(y, baseShader);
-		childTransform->addChild(floor, false);
-		floor->translate(-2, y, -2);
+		building->addChild(floor, false);
+		floor->translate(0, y, 0);
 		floors.push_back(floor);
-	for(unsigned long int x = 0; x < 4; ++x){
-	for(unsigned long int z = 0; z < 4; ++z){
-		if(sweet::NumberUtils::randomBool()){
-			MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
-			floor->cellContainer->addChild(cube)->translate(x, 0, z);
+		for(unsigned long int x = 0; x < 4; ++x){
+			for(unsigned long int z = 0; z < 4; ++z){
+				if(sweet::NumberUtils::randomBool()){
+					MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
+					floor->cellContainer->addChild(cube)->translate(x, 0, z);
+				}
+			}
 		}
 	}
 	}
@@ -57,7 +63,7 @@ void MY_Scene_Main::update(Step * _step){
 
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
-		floors.at(i)->updateVisibility(currentFloor);
+		floors.at(i)->updateVisibility(currentFloor, angle);
 	}
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	camPos.y += ((currentFloor-3.f) - gameCam->firstParent()->getTranslationVector().y)*0.1f;

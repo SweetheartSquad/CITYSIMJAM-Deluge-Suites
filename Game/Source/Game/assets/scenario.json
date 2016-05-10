@@ -15,6 +15,11 @@
   		"id": "support",
   		"src": "rooms/support.obj"
   	},
+  	{
+  		"type": "mesh",
+  		"id": "wall",
+  		"src": "wall.obj"
+  	},
 
 
   	{
