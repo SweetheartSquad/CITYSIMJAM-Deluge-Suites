@@ -7,30 +7,48 @@
 #include <Timeout.h>
 
 MeshInterface * Floor::floorPlane = nullptr;
+TriMesh * Floor::wallO1 = nullptr;
+TriMesh * Floor::wallO2 = nullptr;
+TriMesh * Floor::wallT1 = nullptr;
+TriMesh * Floor::wallT2 = nullptr;
 Floor::Floor(unsigned long int _height, Shader * _shader) : 
 	height(_height)
 {
-	wallContainerOpaque = new Transform();
-	wallContainerTransparent = new Transform();
-	cellContainer = new Transform();
-	addChild(cellContainer,false);
-	addChild(wallContainerTransparent,false);
-	addChild(wallContainerOpaque,false);
-	MeshInterface * wallMeshOpaque = MY_ResourceManager::globalAssets->getMesh("wallOpaque")->meshes.at(0);
-	MeshInterface * wallMeshTransparent = MY_ResourceManager::globalAssets->getMesh("wallTransparent")->meshes.at(0);
-	for(auto & v : wallMeshTransparent->vertices){
-		v.alpha = 0.25f;
-	}
+	if(wallT1 == nullptr){
+		wallO1 = new TriMesh(true);
+		wallO2 = new TriMesh(true);
+		wallT1 = new TriMesh(true);
+		wallT2 = new TriMesh(true);
+		wallO1->insertVertices(*MY_ResourceManager::globalAssets->getMesh("wall")->meshes.at(0));
+		wallO2->insertVertices(*wallO1);
+		wallT1->insertVertices(*wallO1);
+		wallT2->insertVertices(*wallO1);
 
-	for(unsigned long int i = 0; i < 4; ++i){
-		glm::vec3 scale = i%2 == 0 ? glm::vec3(GRID_SIZE_X, 1, GRID_SIZE_Z) : glm::vec3(GRID_SIZE_Z, 1, GRID_SIZE_X);
-		MeshEntity * wall = new MeshEntity(wallMeshOpaque, _shader);
-		wallContainerOpaque->addChild(wall)->scale(scale)->rotate(i*90.f,0,1,0,kOBJECT);
-		walls.push_back(wall);
-		wall = new MeshEntity(wallMeshTransparent, _shader);
-		wallContainerTransparent->addChild(wall)->scale(scale)->rotate(i*90.f,0,1,0,kOBJECT);
-	}
+		wallO1->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+		wallO2->pushTexture2D(wallO1->textures.at(0));
+		wallT1->pushTexture2D(wallO1->textures.at(0));
+		wallT2->pushTexture2D(wallO1->textures.at(0));
 
+		for(auto & v : wallO1->vertices){
+			v.u *= GRID_SIZE_Z;
+			v.x *= GRID_SIZE_X;
+			v.z *= GRID_SIZE_Z;
+		}for(auto & v : wallT1->vertices){
+			v.u *= GRID_SIZE_Z;
+			v.x *= GRID_SIZE_X;
+			v.z *= GRID_SIZE_Z;
+			v.alpha = 0.25f;
+		}for(auto & v : wallO2->vertices){
+			v.u *= GRID_SIZE_X;
+			v.x *= GRID_SIZE_Z;
+			v.z *= GRID_SIZE_X;
+		}for(auto & v : wallT2->vertices){
+			v.u *= GRID_SIZE_X;
+			v.x *= GRID_SIZE_Z;
+			v.z *= GRID_SIZE_X;
+			v.alpha = 0.25f;
+		}
+	}
 	if(floorPlane == nullptr){
 		floorPlane = MeshFactory::getPlaneMesh(GRID_SIZE_X/2.f, GRID_SIZE_Z/2.f);
 		floorPlane->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
@@ -41,6 +59,22 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 			v.v *= GRID_SIZE_Z;
 		}
 	}
+
+	wallContainerOpaque = new Transform();
+	wallContainerTransparent = new Transform();
+	cellContainer = new Transform();
+	addChild(cellContainer,false);
+	addChild(wallContainerTransparent,false);
+	addChild(wallContainerOpaque,false);
+
+	for(unsigned long int i = 0; i < 4; ++i){
+		MeshEntity * wall = new MeshEntity(i%2 == 0 ? wallO1 : wallO2, _shader);
+		wallContainerOpaque->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
+		walls.push_back(wall);
+		wall = new MeshEntity(i%2 == 0 ? wallT1 : wallT2, _shader);
+		wallContainerTransparent->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
+	}
+
 	MeshEntity * fp = new MeshEntity(floorPlane, _shader);
 	wallContainerOpaque->addChild(fp, false);
 	

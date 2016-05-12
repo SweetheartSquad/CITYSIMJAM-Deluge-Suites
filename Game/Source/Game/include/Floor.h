@@ -7,6 +7,7 @@
 
 class Building;
 class Timeout;
+class TriMesh;
 class Cell : public Node{
 public:
 	Building * building;
@@ -14,6 +15,7 @@ public:
 
 class Floor : public Transform{
 public:
+	static TriMesh * wallT1, * wallT2, * wallO1, * wallO2;
 	static MeshInterface * floorPlane;
 	unsigned long int height;
 	std::vector<MeshEntity *> walls;

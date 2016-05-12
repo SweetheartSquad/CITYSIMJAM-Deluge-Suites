@@ -126,7 +126,7 @@ void MY_Scene_Main::update(Step * _step){
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	glm::ivec3 cursorPos = getIsometricCursorPos();
 	
-	selectorThing->firstParent()->translate(glm::vec3(cursorPos.x -2, 0, cursorPos.z - 2), false);
+	selectorThing->firstParent()->translate(glm::vec3(cursorPos.x - GRID_SIZE_X/2.f, 0, cursorPos.z - GRID_SIZE_Z/2.f), false);
 
 	if(mouse->leftJustPressed()){
 
@@ -254,7 +254,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 			cursorPos = start + dir * t;
 		}
 	}
-	return glm::ivec3( glm::floor(cursorPos.x) + 2, currentFloor, glm::floor(cursorPos.z) + 2 );
+	return glm::ivec3( glm::floor(cursorPos.x) + GRID_SIZE_X/2.f, currentFloor, glm::floor(cursorPos.z) + GRID_SIZE_Z/2.f );
 }
 
 void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _position){	
