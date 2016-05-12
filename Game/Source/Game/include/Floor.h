@@ -14,6 +14,7 @@ public:
 
 class Floor : public Transform{
 public:
+	static MeshInterface * floorPlane;
 	unsigned long int height;
 	std::vector<MeshEntity *> walls;
 	

@@ -2,9 +2,11 @@
 
 #include <Floor.h>
 #include <MY_ResourceManager.h>
+#include <MeshFactory.h>
 #include <Easing.h>
 #include <Timeout.h>
 
+MeshInterface * Floor::floorPlane = nullptr;
 Floor::Floor(unsigned long int _height, Shader * _shader) : 
 	height(_height)
 {
@@ -27,6 +29,19 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 		wall = new MeshEntity(wallMeshTransparent, _shader);
 		wallContainerTransparent->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
 	}
+
+	if(floorPlane == nullptr){
+		floorPlane = MeshFactory::getPlaneMesh(GRID_SIZE_X/2.f, GRID_SIZE_Z/2.f);
+		floorPlane->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+		for(auto & v : floorPlane->vertices){
+			v.z = v.y;
+			v.y = 0;
+			v.u *= GRID_SIZE_X;
+			v.v *= GRID_SIZE_Z;
+		}
+	}
+	MeshEntity * fp = new MeshEntity(floorPlane, _shader);
+	wallContainerOpaque->addChild(fp, false);
 	
 	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
 	for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
