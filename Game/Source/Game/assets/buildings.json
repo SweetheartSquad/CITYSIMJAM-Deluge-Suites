@@ -44,6 +44,20 @@
       }
     },{
       "type":"building",
+      "id": "foodcourt",
+      "meshes": ["FOOD_1"],
+      "textures": ["ROOM_1"],
+      "support": true,
+      "capacity": 0,
+      "cost": 75,
+      "weight": 30,
+      "generates":{
+        "food":20,
+        "morale":0,
+        "money":5
+      }
+    },{
+      "type":"building",
       "id": "walkway",
       "meshes": ["empty1"],
       "textures": ["ROOM_1"],
