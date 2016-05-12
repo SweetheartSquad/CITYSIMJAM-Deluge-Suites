@@ -2,6 +2,8 @@
 
 #include <Floor.h>
 #include <MY_ResourceManager.h>
+#include <Easing.h>
+#include <Timeout.h>
 
 Floor::Floor(unsigned long int _height, Shader * _shader) : 
 	height(_height)
@@ -32,6 +34,23 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 		cells[x][z]->building = nullptr;
 	}
 	}
+
+
+	boing = new Timeout(0.5f, [this](sweet::Event * _event){
+		scale(1, false);
+	});
+	boing->eventManager->addEventListener("progress", [this](sweet::Event * _event){
+		float p =_event->getFloatData("progress");
+		float r = 0.1f;
+		float a = 0.25f;
+		if(p < r){
+			p = Easing::easeOutCirc(p, 1, a, r);
+		}else{
+			p = Easing::easeOutBounce(p - r, 1 + a, -a, 1 - r);
+		}
+		scale(p, 1, p, false);
+	});
+	addChild(boing, false);
 }
 
 Floor::~Floor(){

@@ -6,6 +6,7 @@
 #define GRID_SIZE_Z (GRID_SIZE_X)
 
 class Building;
+class Timeout;
 class Cell : public Node{
 public:
 	Building * building;
@@ -19,6 +20,8 @@ public:
 	Transform * cellContainer;
 	Transform * wallContainerOpaque;
 	Transform * wallContainerTransparent;
+
+	Timeout * boing;
 
 	// access is [x][z]
 	Cell * cells[GRID_SIZE_X][GRID_SIZE_Z];

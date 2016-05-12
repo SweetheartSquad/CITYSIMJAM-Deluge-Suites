@@ -136,6 +136,7 @@ void MY_Scene_Main::update(Step * _step){
 			currentAngle -= 360.f;
 		}
 	}
+
 	// scroll floors
 	int floorChange = 0;
 	if(keyboard->keyJustDown(GLFW_KEY_UP) || keyboard->keyJustDown(GLFW_KEY_W) || mouse->getMouseWheelDelta() > 0.5f){
@@ -149,8 +150,16 @@ void MY_Scene_Main::update(Step * _step){
 	}
 	if(floorChange != 0){
 		currentFloor += glm::sign(floorChange);
+
+		// update selector to the current floor
 		selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
 		floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing->firstParent());
+		
+		// trigger animations
+		if(currentFloor != 0){
+			floors.at(currentFloor-1)->boing->restart();
+		}
+		floors.at(currentFloor)->boing->restart();
 	}
 }
 
