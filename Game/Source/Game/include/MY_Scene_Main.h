@@ -76,4 +76,8 @@ public:
 
 	void addTenant();
 	void removeTenant();
+
+	// alerts the player with _msg
+	void alert(std::string _msg);
+	Timeout * alertTimeout;
 };

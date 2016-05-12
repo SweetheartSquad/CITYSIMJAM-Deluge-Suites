@@ -56,8 +56,15 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	buildingRoot = new Transform();
 	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
 	childTransform->addChild(buildingRoot, false);
+
+	// add some floors by default
 	for(unsigned long int y = 0; y < 2; ++y){
 		placeFloor();
+	}
+
+	// add some tenants by default
+	for(unsigned long int i = 0; i < 6; ++i){
+		addTenant();
 	}
 	
 	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
@@ -158,7 +165,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lblMsg->setText("message area");
 	vl->addChild(lblMsg);
 
-
 	gameplayTick = new Timeout(10.f, [this](sweet::Event * _event){
 		money += moneyGen;
 		morale += moraleGen;
@@ -170,9 +176,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(gameplayTick, false);
 	gameplayTick->start();
 
-	for(unsigned long int i = 0; i < 6; ++i){
-		addTenant();
-	}
+	alertTimeout = new Timeout(2.5f, [this](sweet::Event * _event){
+		lblMsg->setText("");
+	});
+	childTransform->addChild(alertTimeout, false);
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -233,7 +240,11 @@ void MY_Scene_Main::update(Step * _step){
 			if(cell->building->definition->id != currentType){
 				if(cell->building->definition->id == "empty" || currentType == "empty"){
 					placeBuilding(currentType, cursorPos, false);
+				}else{
+					alert("You can't place a building here.");
 				}
+			}else{
+				alert("You can't place a building here.");
 			}
 		}
 	}
@@ -366,7 +377,7 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	
 	// if the player can't afford it, let them know and return early
 	if(!_free && money - MY_ResourceManager::getBuilding(_buildingType)->cost < 0){
-		lblMsg->setText("You can't afford this building.");
+		alert("You can't afford this building.");
 		return;
 	}
 	
@@ -414,7 +425,7 @@ void MY_Scene_Main::placeFloor(){
 
 	// if the player can't afford it, let them know and return early
 	if(money - cost < 0){
-		lblMsg->setText("You can't afford a new floor.");
+		alert("You can't afford a new floor.");
 		return;
 	}
 
@@ -460,4 +471,9 @@ void MY_Scene_Main::removeTenant(){
 		tenants = 0;
 		// TODO: game over
 	}
+}
+
+void MY_Scene_Main::alert(std::string _msg){
+	lblMsg->setText(_msg);
+	alertTimeout->restart();
 }
