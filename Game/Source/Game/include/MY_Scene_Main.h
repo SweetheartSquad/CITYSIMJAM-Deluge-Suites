@@ -3,9 +3,16 @@
 #include <MY_Scene_Base.h>
 #include <Floor.h>
 
+class RenderSurface;
+class StandardFrameBuffer;
+
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
 public:
+	Shader * screenSurfaceShader;
+	RenderSurface * screenSurface;
+	StandardFrameBuffer * screenFBO;
+
 	OrthographicCamera * gameCam;
 
 	Transform * buildingRoot;
