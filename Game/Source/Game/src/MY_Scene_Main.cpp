@@ -26,19 +26,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(foundation);
 
 
-	Transform * building = new Transform();
-	building->translate(0, foundation->mesh->calcBoundingBox().height, 0);
-	childTransform->addChild(building, false);
+	buildingRoot = new Transform();
+	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
+	childTransform->addChild(buildingRoot, false);
 	for(unsigned long int y = 0; y < 10; ++y){
-		Floor * floor = new Floor(y, baseShader);
-		building->addChild(floor, false);
-		floor->translate(0, y, 0);
-		floors.push_back(floor);
-		for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
-			for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
-				placeBuilding("empty", glm::ivec3(x,y,z));
-			}
-		}
+		placeFloor();
+	}
 	}
 
 	gameCam->yaw = 45;
@@ -199,6 +192,19 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
 	delete cell->building->firstParent();
 	cell->building = nullptr;
+}
+
+void MY_Scene_Main::placeFloor(){
+	unsigned long int y = floors.size();
+	Floor * floor = new Floor(y, baseShader);
+	buildingRoot->addChild(floor, false);
+	floor->translate(0, y, 0);
+	floors.push_back(floor);
+	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
+		for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
+			placeBuilding("empty", glm::ivec3(x,y,z));
+		}
+	}
 }
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){

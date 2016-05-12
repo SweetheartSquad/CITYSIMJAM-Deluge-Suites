@@ -8,6 +8,7 @@ class MY_Scene_Main : public MY_Scene_Base{
 public:
 	OrthographicCamera * gameCam;
 
+	Transform * buildingRoot;
 	std::string currentType;
 
 	// the floor which the player is looking at
@@ -36,6 +37,9 @@ public:
 
 	void placeBuilding(std::string _buildingType, glm::ivec3 _position);
 	void removeBuilding(glm::ivec3 _position);
+
+	// adds a floor to the top of the building
+	void placeFloor();
 
 	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
 	Cell * getCell(glm::ivec3 _position);
