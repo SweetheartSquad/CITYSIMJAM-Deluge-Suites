@@ -71,16 +71,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		btn->setMouseEnabled(true);
 		btn->setText(b.first);
 		btn->eventManager->addEventListener("click", [this, b](sweet::Event * _event){
-			if(currentType != b.first){
-				currentType = b.first;
-				selectorThing->mesh->vertices.clear();
-				selectorThing->mesh->indices.clear();
-				selectorThing->mesh->insertVertices(*MY_ResourceManager::getBuilding(currentType)->meshes.at(0));
-				for(auto & v : selectorThing->mesh->vertices){
-					v.alpha = 0.25f;
-				}
-				selectorThing->mesh->replaceTextures(MY_ResourceManager::getBuilding(currentType)->meshes.at(0)->textures.at(0));
-			}
+			setType(b.first);
 		});
 
 	}
@@ -262,6 +253,23 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 		}
 	}
 	return glm::ivec3( glm::floor(cursorPos.x) + GRID_SIZE_X/2.f, currentFloor, glm::floor(cursorPos.z) + GRID_SIZE_Z/2.f );
+}
+
+void MY_Scene_Main::setType(std::string _buildingType){
+	// if the type hasn't changed, return early without doing anything
+	if(currentType == _buildingType){
+		return;
+	}
+
+	currentType = _buildingType;
+
+	selectorThing->mesh->vertices.clear();
+	selectorThing->mesh->indices.clear();
+	selectorThing->mesh->insertVertices(*MY_ResourceManager::getBuilding(currentType)->meshes.at(0));
+	for(auto & v : selectorThing->mesh->vertices){
+		v.alpha = 0.25f;
+	}
+	selectorThing->mesh->replaceTextures(MY_ResourceManager::getBuilding(currentType)->meshes.at(0)->textures.at(0));
 }
 
 void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _position){	
