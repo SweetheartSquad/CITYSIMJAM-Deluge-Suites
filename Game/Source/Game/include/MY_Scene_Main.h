@@ -27,8 +27,19 @@ public:
 	MeshEntity * selectorThing;
 	TextLabel * lblMsg;
 
-
+	// handles generated resources, water level rising, etc.
+	Timeout * gameplayTick;
+	
+	float food;
+	float morale;
 	float money;
+	float weight;
+
+	// resource generated per tick
+	float moneyGen, moraleGen, foodGen;
+
+	float waterLevel;
+	float capacity;
 
 	std::vector<Floor *> floors;
 

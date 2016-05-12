@@ -7,8 +7,14 @@
 AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 	Asset(_json, _scenario),
 	support(_json.get("support", false).asBool()),
-	cost(_json.get("cost", 0).asFloat())
+	capacity(_json.get("capacity", 0).asUInt()),
+	cost(_json.get("cost", 0).asFloat()),
+	weight(_json.get("weight", 0).asFloat())
 {
+	generates.food = _json["generates"].get("food", 0).asFloat();
+	generates.morale = _json["generates"].get("morale", 0).asFloat();
+	generates.money = _json["generates"].get("money", 0).asFloat();
+
 	Json::Value meshesJson = _json["meshes"];
 	for(auto m : meshesJson){
 		MeshInterface * mesh = MY_ResourceManager::globalAssets->getMesh(m.asString())->meshes.at(0);

@@ -24,7 +24,13 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	screenSurfaceShader(new Shader("assets/RenderSurface_1", false, true)),
 	screenSurface(new RenderSurface(screenSurfaceShader, true)),
 	screenFBO(new StandardFrameBuffer(true)),
-	money(1000.f)
+	money(1000.f),
+	morale(100),
+	food(100),
+	foodGen(0),
+	moraleGen(-10),
+	moneyGen(0),
+	weight(0)
 {
 
 
@@ -64,11 +70,16 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
+	vl->setRenderMode(kTEXTURE);
 	uiLayer->addChild(vl);
 
 	for(auto b : MY_ResourceManager::buildings->assets.at("building")){
 		TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
+		//btn->setRenderMode(kTEXTURE);
 		vl->addChild(btn);
+		btn->setPadding(2);
+		btn->setMargin(2);
+		btn->setBackgroundColour(1,0,0,1);
 		btn->setMouseEnabled(true);
 		btn->setText(b.first);
 		btn->eventManager->addEventListener("click", [this, b](sweet::Event * _event){
@@ -83,15 +94,79 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
 		placeFloor();
 	});
-
-	TextLabelControlled * lblMoney = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lblMoney->prefix = "cashmoney: ";
-	lblMoney->suffix = " dollas";
-	vl->addChild(lblMoney);
+	
+	{
+	TextLabelControlled * lbl = new TextLabelControlled(&waterLevel, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "water level: ";
+	lbl->suffix = " floors";
+	lbl->decimals = 1;
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "weight: ";
+	lbl->suffix = "";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "cashmoney: ";
+	lbl->suffix = " dollas";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&food, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "food: ";
+	lbl->suffix = " foods";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "morale: ";
+	lbl->suffix = "";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "moraleGen: ";
+	lbl->suffix = "/tick";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "foodGen: ";
+	lbl->suffix = "/tick";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "moneyGen: ";
+	lbl->suffix = "/tick";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "Capacity: ";
+	lbl->suffix = " tennants";
+	vl->addChild(lbl);
+	//lbl->setRenderMode(kTEXTURE);
+	}
 	
 	lblMsg = new TextLabel(uiLayer->world, font, textShader);
 	lblMsg->setText("message area");
 	vl->addChild(lblMsg);
+
+
+	gameplayTick = new Timeout(10.f, [this](sweet::Event * _event){
+		money += moneyGen;
+		morale += moraleGen;
+		food += foodGen;
+		waterLevel += weight;
+
+		gameplayTick->restart();
+	});
+	childTransform->addChild(gameplayTick, false);
+	gameplayTick->start();
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -291,12 +366,19 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	
 	removeBuilding(_position);
 
-	Building * b = new Building(MY_ResourceManager::getBuilding(_buildingType), baseShader);
+	const AssetBuilding * ab = MY_ResourceManager::getBuilding(_buildingType);
+	Building * b = new Building(ab, baseShader);
 	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f, 0, _position.z - GRID_SIZE_Z/2.f, false);
 	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
+		
+	weight += ab->weight;
+	foodGen += ab->generates.food;
+	moraleGen += ab->generates.morale;
+	moneyGen += ab->generates.money;
+	capacity += ab->capacity;
 
 	if(b->definition->support && _position.y < floors.size()-1){
-		placeBuilding("empty", _position + glm::ivec3(0,1,0));
+		placeBuilding("empty", _position + glm::ivec3(0,1,0), true);
 	}
 
 	if(!_free){
@@ -308,6 +390,14 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	Cell * cell = getCell(_position);
 	if(cell->building != nullptr){
 		floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
+		const AssetBuilding * ab = cell->building->definition;
+		
+		weight -= ab->weight;
+		foodGen -= ab->generates.food;
+		moraleGen -= ab->generates.morale;
+		moneyGen -= ab->generates.money;
+		capacity -= ab->capacity;
+
 		delete cell->building->firstParent();
 		cell->building = nullptr;
 	}

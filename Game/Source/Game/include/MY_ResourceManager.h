@@ -12,8 +12,17 @@ public:
 	std::vector<MeshInterface *> meshes;
 	// this building can support a building on the space above it
 	bool support;
+	// number of tennants that can live here
+	unsigned long int capacity;
 	// money gained/lost when placed by player
 	float cost;
+	// affects difficulty
+	float weight;
+	struct {
+		float food;
+		float money;
+		float morale;
+	} generates;
 
 	// substitute for public constructor (we can't take the address of the constructor,
 	// so we have a static function which simply returns a new instance of the class instead)

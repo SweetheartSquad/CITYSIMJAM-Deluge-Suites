@@ -6,35 +6,84 @@
       "meshes": ["support"],
       "textures": ["ROOM_1"],
       "support": true,
+      "capacity": 0,
       "cost": 100,
+      "weight": 10,
+      "generates":{
+        "food":0,
+        "morale":0,
+        "money":0
+      }
     },{
       "type":"building",
       "id": "stairs",
       "meshes": ["stairs"],
       "textures": ["ROOM_1"],
-      "support": false,
-      "cost": 50
+      "support": true,
+      "capacity": 0,
+      "cost": 50,
+      "weight": 10,
+      "generates":{
+        "food":0,
+        "morale":0,
+        "money":0
+      }
     },{
       "type":"building",
       "id": "room",
       "meshes": ["ROOM_1"],
       "textures": ["ROOM_1"],
-      "support": false,
-      "cost": 50
+      "support": true,
+      "capacity": 1,
+      "cost": 50,
+      "weight": 20,
+      "generates":{
+        "food":0,
+        "morale":0,
+        "money":10
+      }
+    },{
+      "type":"building",
+      "id": "walkway",
+      "meshes": ["empty1"],
+      "textures": ["ROOM_1"],
+      "support": true,
+      "capacity": 0,
+      "cost": 50,
+      "weight": 5,
+      "generates":{
+        "food":0,
+        "morale":1,
+        "money":0
+      }
     },{
       "type":"building",
       "id": "empty",
       "meshes": ["empty2","empty3","empty4"],
       "textures": ["ROOM_1"],
       "support": false,
-      "cost": -10
+      "capacity": 0,
+      "cost": -10,
+      "weight": 0,
+      "generates":{
+        "food":0,
+        "morale":0,
+        "money":0
+      }
     },{
       "type":"building",
       "id": "blocked",
       "meshes": ["empty1"],
       "textures": ["ROOM_1"],
       "support": false,
-      "cost": 0
+      "capacity": 0,
+      "cost": 0,
+      "weight": 0,
+      "generates":{
+        "food":0,
+        "morale":0,
+        "money":0
+      }
     }
   ]
 }
