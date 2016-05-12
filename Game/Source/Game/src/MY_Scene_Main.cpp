@@ -60,11 +60,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
 
-
-	sweet::setCursorMode(GLFW_CURSOR_NORMAL);
-
-
-
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
 	uiLayer->addChild(vl);
