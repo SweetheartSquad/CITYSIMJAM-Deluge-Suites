@@ -15,11 +15,41 @@
   		"id": "support",
   		"src": "rooms/support.obj"
   	},
-  	{
-  		"type": "mesh",
-  		"id": "wall",
-  		"src": "wall.obj"
-  	},
+    {
+      "type": "mesh",
+      "id": "wall",
+      "src": "wall.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "empty1",
+      "src": "rooms/empty1.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "empty2",
+      "src": "rooms/empty2.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "empty3",
+      "src": "rooms/empty3.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "empty4",
+      "src": "rooms/empty4.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "foundation",
+      "src": "foundation.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "cube",
+      "src": "cube.obj"
+    },
 
 
   	{

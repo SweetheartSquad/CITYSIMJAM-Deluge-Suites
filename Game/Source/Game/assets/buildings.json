@@ -3,18 +3,23 @@
     {
       "type":"building",
       "id": "support",
-      "mesh": "support",
-      "texture": "ROOM_1"
+      "meshes": ["support"],
+      "textures": ["ROOM_1"]
     },{
       "type":"building",
       "id": "stairs",
-      "mesh": "stairs",
-      "texture": "ROOM_1"
+      "meshes": ["stairs"],
+      "textures": ["ROOM_1"]
     },{
       "type":"building",
       "id": "room",
-      "mesh": "ROOM_1",
-      "texture": "ROOM_1"
+      "meshes": ["ROOM_1"],
+      "textures": ["ROOM_1"]
+    },{
+      "type":"building",
+      "id": "empty",
+      "meshes": ["empty1","empty2","empty3","empty4"],
+      "textures": ["ROOM_1"]
     }
   ]
 }

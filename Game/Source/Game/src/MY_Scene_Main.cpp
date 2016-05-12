@@ -14,25 +14,21 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	currentFloor(0),
 	angle(0),
 	currentAngle(0),
-	currentType("")
+	currentType("empty")
 {
 	gameCam = new OrthographicCamera(-8,8, -4.5,4.5, -100,100);
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
 	activeCamera = gameCam;
-	
-	sweet::ShuffleVector<MeshInterface *> meshes;
-	MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
-	MY_ResourceManager::globalAssets->getMesh("stairs")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
-	MY_ResourceManager::globalAssets->getMesh("support")->meshes.at(0)->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
 
-	meshes.push(MY_ResourceManager::globalAssets->getMesh("ROOM_1")->meshes.at(0));
-	meshes.push(MY_ResourceManager::globalAssets->getMesh("stairs")->meshes.at(0));
-	meshes.push(MY_ResourceManager::globalAssets->getMesh("support")->meshes.at(0));
+	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
+	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	childTransform->addChild(foundation);
+
 
 	Transform * building = new Transform();
+	building->translate(0, foundation->mesh->calcBoundingBox().height, 0);
 	childTransform->addChild(building, false);
-	building->translate(-GRID_SIZE_X/2.f, 0, -GRID_SIZE_Z/2.f);
 	for(unsigned long int y = 0; y < 10; ++y){
 		Floor * floor = new Floor(y, baseShader);
 		building->addChild(floor, false);
@@ -40,11 +36,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		floors.push_back(floor);
 		for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
 			for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
-				if(sweet::NumberUtils::randomBool()){
-					MeshEntity * cube = new MeshEntity(meshes.pop(), baseShader);
-					floor->cellContainer->addChild(cube)->translate(x, 0, z);
-					floor->cells[x][z]->building = cube;
-				}
+				placeBuilding("empty", glm::ivec3(x,y,z));
 			}
 		}
 	}
@@ -56,7 +48,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	sweet::setCursorMode(GLFW_CURSOR_NORMAL);
 
-	selectorThing = new MeshEntity(MeshFactory::getCubeMesh(), baseShader);
+	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
+	for(auto & v : selectorThing->mesh->vertices){
+		v.alpha = 0.25f;
+	}
 	childTransform->addChild(selectorThing);
 
 
@@ -93,31 +88,26 @@ void MY_Scene_Main::update(Step * _step){
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	glm::ivec3 cursorPos = getIsometricCursorPos();
 	
-	//selectorThing->firstParent()->translate(cursorPos, false);
+	selectorThing->firstParent()->translate(glm::vec3(cursorPos) + glm::vec3(-2,0,-2), false);
 
 	if(mouse->leftJustPressed()){
-		std::stringstream ss;
-		ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z;
-		Log::info(ss.str());
 
 		// make sure the cursor is within bounds
 		if(cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X &&
 			cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z){
-			Floor * floor = floors.at(cursorPos.y);
-			Cell * cell = floor->cells[cursorPos.x][cursorPos.z];
 			
-			// do something with the cell
+			Cell * cell = getCell(cursorPos);
 
-			if(cell->building == nullptr){
-				if(currentType != ""){
-					Building * b = new Building(MY_ResourceManager::getBuilding(currentType), baseShader);
-					floor->cellContainer->addChild(b)->translate(cursorPos.x, 0, cursorPos.z, false);
-					cell->building = b;
+			std::stringstream ss;
+			ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z << std::endl;
+			ss << "cell type is " << cell->building->definition->id << ", user type is " << currentType;
+			Log::info(ss.str());
+
+			if(cell->building->definition->id != currentType){
+				if(cell->building->definition->id == "empty" || currentType == "empty"){
+					removeBuilding(cursorPos);
+					placeBuilding(currentType, cursorPos);
 				}
-			}else{
-				floor->cellContainer->removeChild(cell->building->firstParent());
-				delete cell->building->firstParent();
-				cell->building = nullptr;
 			}
 		}
 	}
@@ -194,4 +184,21 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 		}
 	}
 	return glm::ivec3( glm::floor(cursorPos.x) + 2, currentFloor, glm::floor(cursorPos.z) + 2 );
+}
+
+void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _position){	
+	Building * b = new Building(MY_ResourceManager::getBuilding(_buildingType), baseShader);
+	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f, 0, _position.z - GRID_SIZE_Z/2.f, false);
+	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
+}
+
+void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
+	Cell * cell = getCell(_position);
+	floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
+	delete cell->building->firstParent();
+	cell->building = nullptr;
+}
+
+Cell * MY_Scene_Main::getCell(glm::ivec3 _position){
+	return floors.at(_position.y)->cells[_position.x][_position.z];
 }

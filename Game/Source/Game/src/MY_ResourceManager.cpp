@@ -5,10 +5,14 @@
 
 // building
 AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
-	Asset(_json, _scenario),
-	mesh(MY_ResourceManager::globalAssets->getMesh(_json.get("mesh", "DEFAULT").asString())->meshes.at(0))
+	Asset(_json, _scenario)
 {
-	mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture(_json.get("texture", "DEFAULT").asString())->texture);
+	Json::Value meshesJson = _json["meshes"];
+	for(auto m : meshesJson){
+		MeshInterface * mesh = MY_ResourceManager::globalAssets->getMesh(m.asString())->meshes.at(0);
+		mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture(_json["textures"][0].asString())->texture);
+		meshes.push_back(mesh);
+	}
 }
 AssetBuilding * AssetBuilding::create(Json::Value _json, Scenario * const _scenario){
 	return new AssetBuilding(_json, _scenario);

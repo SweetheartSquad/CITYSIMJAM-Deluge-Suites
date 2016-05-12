@@ -9,7 +9,7 @@ private:
 	// constructor is private; use create instead if you need to instantiate directly
 	AssetBuilding(Json::Value _json, Scenario * const _scenario);
 public:
-	MeshInterface * mesh;
+	std::vector<MeshInterface *> meshes;
 
 	// substitute for public constructor (we can't take the address of the constructor,
 	// so we have a static function which simply returns a new instance of the class instead)

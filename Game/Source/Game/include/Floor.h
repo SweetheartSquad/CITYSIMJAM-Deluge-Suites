@@ -5,9 +5,10 @@
 #define GRID_SIZE_X 4
 #define GRID_SIZE_Z (GRID_SIZE_X)
 
+class Building;
 class Cell : public Node{
 public:
-	MeshEntity * building;
+	Building * building;
 };
 
 class Floor : public Transform{

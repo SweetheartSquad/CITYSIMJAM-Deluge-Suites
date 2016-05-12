@@ -33,4 +33,10 @@ public:
 
 	// returns the isometric cursor position
 	glm::ivec3 getIsometricCursorPos();
+
+	void placeBuilding(std::string _buildingType, glm::ivec3 _position);
+	void removeBuilding(glm::ivec3 _position);
+
+	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
+	Cell * getCell(glm::ivec3 _position);
 };
