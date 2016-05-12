@@ -23,7 +23,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	currentType("empty"),
 	screenSurfaceShader(new Shader("assets/RenderSurface_1", false, true)),
 	screenSurface(new RenderSurface(screenSurfaceShader, true)),
-	screenFBO(new StandardFrameBuffer(true))
+	screenFBO(new StandardFrameBuffer(true)),
+	money(1000.f)
 {
 
 
