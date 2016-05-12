@@ -47,7 +47,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	buildingRoot = new Transform();
 	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
 	childTransform->addChild(buildingRoot, false);
-	for(unsigned long int y = 0; y < 10; ++y){
+	for(unsigned long int y = 0; y < 2; ++y){
 		placeFloor();
 	}
 	
@@ -84,6 +84,13 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		});
 
 	}
+	TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
+	vl->addChild(btn);
+	btn->setMouseEnabled(true);
+	btn->setText("Place Floor");
+	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
+		placeFloor();
+	});
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
