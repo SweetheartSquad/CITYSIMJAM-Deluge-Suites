@@ -11,6 +11,7 @@
 #include <shader\ShaderComponentText.h>
 #include <shader\ShaderComponentTexture.h>
 #include <shader\ShaderComponentDiffuse.h>
+#include <shader\ShaderComponentDepthOffset.h>
 #include <shader\ShaderComponentMVP.h>
 
 #include <NumberUtils.h>
@@ -28,6 +29,7 @@ MY_Scene_Base::MY_Scene_Base(Game * _game) :
 {
 	baseShader->addComponent(new ShaderComponentMVP(baseShader));
 	//baseShader->addComponent(new ShaderComponentDiffuse(baseShader));
+	baseShader->addComponent(new ShaderComponentDepthOffset(baseShader));
 	baseShader->addComponent(new ShaderComponentTexture(baseShader));
 	baseShader->compileShader();
 	baseShader->nodeName = "MY_Scene_Base base shader";
