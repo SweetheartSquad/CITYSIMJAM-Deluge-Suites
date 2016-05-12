@@ -268,6 +268,10 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	Building * b = new Building(MY_ResourceManager::getBuilding(_buildingType), baseShader);
 	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f, 0, _position.z - GRID_SIZE_Z/2.f, false);
 	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
+
+	if(b->definition->support && _position.y < floors.size()-1){
+		placeBuilding("empty", _position + glm::ivec3(0,1,0));
+	}
 }
 
 void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
@@ -285,7 +289,11 @@ void MY_Scene_Main::placeFloor(){
 	floors.push_back(floor);
 	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
 		for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
-			placeBuilding("empty", glm::ivec3(x,y,z));
+			if(floors.size() == 1 || floors.at(floors.size()-2)->cells[x][z]->building->definition->support){
+				placeBuilding("empty", glm::ivec3(x,y,z));
+			}else{
+				placeBuilding("blocked", glm::ivec3(x,y,z));
+			}
 		}
 	}
 }

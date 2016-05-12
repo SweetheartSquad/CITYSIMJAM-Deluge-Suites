@@ -4,22 +4,32 @@
       "type":"building",
       "id": "support",
       "meshes": ["support"],
-      "textures": ["ROOM_1"]
+      "textures": ["ROOM_1"],
+      "support": true
     },{
       "type":"building",
       "id": "stairs",
       "meshes": ["stairs"],
-      "textures": ["ROOM_1"]
+      "textures": ["ROOM_1"],
+      "support": false
     },{
       "type":"building",
       "id": "room",
       "meshes": ["ROOM_1"],
-      "textures": ["ROOM_1"]
+      "textures": ["ROOM_1"],
+      "support": false
     },{
       "type":"building",
       "id": "empty",
       "meshes": ["empty1","empty2","empty3","empty4"],
-      "textures": ["ROOM_1"]
+      "textures": ["ROOM_1"],
+      "support": false
+    },{
+      "type":"building",
+      "id": "blocked",
+      "meshes": ["empty1"],
+      "textures": ["ROOM_1"],
+      "support": false
     }
   ]
 }

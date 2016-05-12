@@ -5,7 +5,8 @@
 
 // building
 AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
-	Asset(_json, _scenario)
+	Asset(_json, _scenario),
+	support(_json.get("support", false).asBool())
 {
 	Json::Value meshesJson = _json["meshes"];
 	for(auto m : meshesJson){
