@@ -7,7 +7,7 @@
 AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 	Asset(_json, _scenario),
 	support(_json.get("support", false).asBool()),
-	capacity(_json.get("capacity", 0).asUInt()),
+	capacity(_json.get("capacity", 0).asFloat()),
 	cost(_json.get("cost", 0).asFloat()),
 	weight(_json.get("weight", 0).asFloat())
 {

@@ -12,8 +12,8 @@ public:
 	std::vector<MeshInterface *> meshes;
 	// this building can support a building on the space above it
 	bool support;
-	// number of tennants that can live here
-	unsigned long int capacity;
+	// number of tenants that can live here
+	float capacity;
 	// money gained/lost when placed by player
 	float cost;
 	// affects difficulty

@@ -30,7 +30,9 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	foodGen(0),
 	moraleGen(-10),
 	moneyGen(0),
-	weight(0)
+	weight(0),
+	capacity(10),
+	tenants(0)
 {
 
 
@@ -127,19 +129,19 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	vl->addChild(lbl);
 	//lbl->setRenderMode(kTEXTURE);
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+		TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = "moraleGen: ";
 	lbl->suffix = "/tick";
 	vl->addChild(lbl);
 	//lbl->setRenderMode(kTEXTURE);
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = "foodGen: ";
 	lbl->suffix = "/tick";
 	vl->addChild(lbl);
 	//lbl->setRenderMode(kTEXTURE);
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, 0, FLT_MAX, uiLayer->world, font, textShader);
+	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = "moneyGen: ";
 	lbl->suffix = "/tick";
 	vl->addChild(lbl);
@@ -147,7 +149,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = "Capacity: ";
-	lbl->suffix = " tennants";
+	lbl->suffix = " tenants";
 	vl->addChild(lbl);
 	//lbl->setRenderMode(kTEXTURE);
 	}
@@ -167,6 +169,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	});
 	childTransform->addChild(gameplayTick, false);
 	gameplayTick->start();
+
+	for(unsigned long int i = 0; i < 6; ++i){
+		addTenant();
+	}
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -432,4 +438,26 @@ void MY_Scene_Main::placeFloor(){
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){
 	return floors.at(_position.y)->cells[_position.x][_position.z];
+}
+
+
+void MY_Scene_Main::addTenant(){
+	tenants += 1;
+	
+	moraleGen += -5;
+	foodGen += -5;
+	moneyGen += 5;
+	
+}
+void MY_Scene_Main::removeTenant(){
+	tenants -= 1;
+
+	moraleGen -= -5;
+	foodGen -= -5;
+	moneyGen -= 5;
+
+	if(tenants <= FLT_EPSILON){
+		tenants = 0;
+		// TODO: game over
+	}
 }

@@ -39,6 +39,9 @@ public:
 	float moneyGen, moraleGen, foodGen;
 
 	float waterLevel;
+
+	float tenants;
+	// maximum number of tenants
 	float capacity;
 
 	std::vector<Floor *> floors;
@@ -69,4 +72,8 @@ public:
 
 	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
 	Cell * getCell(glm::ivec3 _position);
+
+
+	void addTenant();
+	void removeTenant();
 };
