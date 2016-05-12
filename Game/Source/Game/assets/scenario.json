@@ -1,10 +1,19 @@
 {
   "assets": [
-  	{
-  		"type": "mesh",
-  		"id": "ROOM_1",
-  		"src": "rooms/room1.obj"
-  	},
+    {
+      "type": "font",
+      "id": "FONT",
+      "src": "slkscr.ttf",
+      "size":"16px",
+      "antiAliased": false
+    },
+
+
+    {
+      "type": "mesh",
+      "id": "ROOM_1",
+      "src": "rooms/room1.obj"
+    },
   	{
   		"type": "mesh",
   		"id": "stairs",
