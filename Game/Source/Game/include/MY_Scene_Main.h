@@ -29,6 +29,9 @@ public:
 
 	// handles generated resources, water level rising, etc.
 	Timeout * gameplayTick;
+	// reduced each tick
+	// when it reaches zero, new tenants can arrive and it resets
+	int tenantTimer;
 	
 	float food;
 	float morale;

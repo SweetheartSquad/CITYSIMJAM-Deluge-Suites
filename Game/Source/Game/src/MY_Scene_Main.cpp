@@ -32,7 +32,9 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	moneyGen(0),
 	weight(0),
 	capacity(10),
-	tenants(0)
+	tenants(0),
+	waterLevel(0),
+	tenantTimer(3)
 {
 
 
@@ -153,12 +155,16 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lbl->suffix = "/tick";
 	vl->addChild(lbl);
 	//lbl->setRenderMode(kTEXTURE);
-	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
+	}
+	{TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lbl->prefix = "Population: ";
+	lbl->suffix = " tenants";
+	vl->addChild(lbl);
+	}
+	{TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = "Capacity: ";
 	lbl->suffix = " tenants";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
 	}
 	
 	lblMsg = new TextLabel(uiLayer->world, font, textShader);
@@ -166,6 +172,16 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	vl->addChild(lblMsg);
 
 	gameplayTick = new Timeout(10.f, [this](sweet::Event * _event){
+		tenantTimer -= 1;
+		if(tenantTimer == 0){
+			tenantTimer = 3;
+			for(unsigned long int i = 0; i < sweet::NumberUtils::randomInt(1,3); ++i){
+				if(capacity - tenants > 0.99f){
+					addTenant();
+				}
+			}
+		}
+
 		money += moneyGen;
 		morale += moraleGen;
 		food += foodGen;
