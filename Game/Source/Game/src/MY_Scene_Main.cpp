@@ -136,14 +136,18 @@ void MY_Scene_Main::update(Step * _step){
 		}
 	}
 	// scroll floors
+	int floorChange = 0;
 	if(keyboard->keyJustDown(GLFW_KEY_UP) || keyboard->keyJustDown(GLFW_KEY_W) || mouse->getMouseWheelDelta() > 0.5f){
 		if(currentFloor < floors.size()-1){
-			currentFloor += 1;
+			floorChange += 1;
 		}
 	}if(keyboard->keyJustDown(GLFW_KEY_DOWN) || keyboard->keyJustDown(GLFW_KEY_S) || mouse->getMouseWheelDelta() < -0.5f){
 		if(currentFloor > 0){
-			currentFloor -= 1;
+			floorChange -= 1;
 		}
+	}
+	if(floorChange != 0){
+		currentFloor += glm::sign(floorChange);
 	}
 }
 
