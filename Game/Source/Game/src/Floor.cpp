@@ -23,11 +23,12 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 	}
 
 	for(unsigned long int i = 0; i < 4; ++i){
+		glm::vec3 scale = i%2 == 0 ? glm::vec3(GRID_SIZE_X, 1, GRID_SIZE_Z) : glm::vec3(GRID_SIZE_Z, 1, GRID_SIZE_X);
 		MeshEntity * wall = new MeshEntity(wallMeshOpaque, _shader);
-		wallContainerOpaque->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
+		wallContainerOpaque->addChild(wall)->scale(scale)->rotate(i*90.f,0,1,0,kOBJECT);
 		walls.push_back(wall);
 		wall = new MeshEntity(wallMeshTransparent, _shader);
-		wallContainerTransparent->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
+		wallContainerTransparent->addChild(wall)->scale(scale)->rotate(i*90.f,0,1,0,kOBJECT);
 	}
 
 	if(floorPlane == nullptr){
