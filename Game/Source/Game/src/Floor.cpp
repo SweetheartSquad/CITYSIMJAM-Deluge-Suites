@@ -6,15 +6,24 @@
 Floor::Floor(unsigned long int _height, Shader * _shader) : 
 	height(_height)
 {
-	wallContainer = new Transform();
+	wallContainerOpaque = new Transform();
+	wallContainerTransparent = new Transform();
 	cellContainer = new Transform();
 	addChild(cellContainer,false);
-	addChild(wallContainer,false);
-	MeshInterface * wallMesh = MY_ResourceManager::globalAssets->getMesh("wall")->meshes.at(0);
+	addChild(wallContainerTransparent,false);
+	addChild(wallContainerOpaque,false);
+	MeshInterface * wallMeshOpaque = MY_ResourceManager::globalAssets->getMesh("wallOpaque")->meshes.at(0);
+	MeshInterface * wallMeshTransparent = MY_ResourceManager::globalAssets->getMesh("wallTransparent")->meshes.at(0);
+	for(auto & v : wallMeshTransparent->vertices){
+		v.alpha = 0.25f;
+	}
+
 	for(unsigned long int i = 0; i < 4; ++i){
-		MeshEntity * wall = new MeshEntity(wallMesh, _shader);
-		wallContainer->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
+		MeshEntity * wall = new MeshEntity(wallMeshOpaque, _shader);
+		wallContainerOpaque->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
 		walls.push_back(wall);
+		wall = new MeshEntity(wallMeshTransparent, _shader);
+		wallContainerTransparent->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
 	}
 	
 	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
@@ -34,24 +43,20 @@ Floor::~Floor(){
 }
 
 void Floor::updateVisibility(unsigned long int _height, unsigned long int _angle){
+	
+	wallContainerTransparent->setVisible(_height < height); // transparent walls visible above current floor
+	wallContainerOpaque->setVisible(_height >= height); // opaque walls visible on current floor and below
+	cellContainer->setVisible(_height == height); // cells visible on current floor
+
 	if(height == _height){
-		setVisible(true);
-		cellContainer->setVisible(true);
-		wallContainer->setVisible(true);
+		// adjust individual wall visibility on current floor based on angle
 		for(unsigned long int i = 0; i < walls.size(); ++i){
 			walls.at(i)->setVisible(i == _angle || i == _angle+1 || i == _angle-3);
 		}
 	}else{
-		cellContainer->setVisible(false);
-		if(height < _height){
-			setVisible(true);
-			wallContainer->setVisible(true);
-			for(auto wall : walls){
-				wall->setVisible(true);
-			}
-		}else{
-			setVisible(false);
-			wallContainer->setVisible(false);
+		// make all walls visible on other floors
+		for(auto wall : walls){
+			wall->setVisible(true);
 		}
 	}
 }

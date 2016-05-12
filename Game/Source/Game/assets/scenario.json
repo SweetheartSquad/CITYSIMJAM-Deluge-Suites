@@ -17,7 +17,12 @@
   	},
     {
       "type": "mesh",
-      "id": "wall",
+      "id": "wallOpaque",
+      "src": "wall.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "wallTransparent",
       "src": "wall.obj"
     },
     {

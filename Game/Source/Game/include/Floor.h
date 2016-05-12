@@ -17,7 +17,8 @@ public:
 	std::vector<MeshEntity *> walls;
 	
 	Transform * cellContainer;
-	Transform * wallContainer;
+	Transform * wallContainerOpaque;
+	Transform * wallContainerTransparent;
 
 	// access is [x][z]
 	Cell * cells[GRID_SIZE_X][GRID_SIZE_Z];

@@ -16,6 +16,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	currentAngle(0),
 	currentType("empty")
 {
+
+
 	gameCam = new OrthographicCamera(-8,8, -4.5,4.5, -100,100);
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
@@ -32,7 +34,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	for(unsigned long int y = 0; y < 10; ++y){
 		placeFloor();
 	}
+
+	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
+	for(auto & v : selectorThing->mesh->vertices){
+		v.alpha = 0.25f;
 	}
+	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
 
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
@@ -40,12 +47,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 
 	sweet::setCursorMode(GLFW_CURSOR_NORMAL);
-
-	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
-	for(auto & v : selectorThing->mesh->vertices){
-		v.alpha = 0.25f;
-	}
-	childTransform->addChild(selectorThing);
 
 
 
@@ -81,7 +82,7 @@ void MY_Scene_Main::update(Step * _step){
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	glm::ivec3 cursorPos = getIsometricCursorPos();
 	
-	selectorThing->firstParent()->translate(glm::vec3(cursorPos) + glm::vec3(-2,0,-2), false);
+	selectorThing->firstParent()->translate(glm::vec3(cursorPos.x -2, 0, cursorPos.z - 2), false);
 
 	if(mouse->leftJustPressed()){
 
@@ -148,6 +149,8 @@ void MY_Scene_Main::update(Step * _step){
 	}
 	if(floorChange != 0){
 		currentFloor += glm::sign(floorChange);
+		selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
+		floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing->firstParent());
 	}
 }
 
