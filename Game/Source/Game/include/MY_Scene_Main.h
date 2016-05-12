@@ -5,6 +5,7 @@
 
 class RenderSurface;
 class StandardFrameBuffer;
+class TextLabel;
 
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
@@ -24,6 +25,10 @@ public:
 	float currentAngle;
 	
 	MeshEntity * selectorThing;
+	TextLabel * lblMsg;
+
+
+	float money;
 
 	std::vector<Floor *> floors;
 
@@ -42,7 +47,10 @@ public:
 	// returns the isometric cursor position
 	glm::ivec3 getIsometricCursorPos();
 
-	void placeBuilding(std::string _buildingType, glm::ivec3 _position);
+	// sets the current building type to _buildingType and updates the cursor to match
+	void setType(std::string _buildingType);
+
+	void placeBuilding(std::string _buildingType, glm::ivec3 _position, bool _free);
 	void removeBuilding(glm::ivec3 _position);
 
 	// adds a floor to the top of the building

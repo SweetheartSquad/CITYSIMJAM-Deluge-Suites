@@ -82,6 +82,15 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
 		placeFloor();
 	});
+
+	TextLabelControlled * lblMoney = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
+	lblMoney->prefix = "cashmoney: ";
+	lblMoney->suffix = " dollas";
+	vl->addChild(lblMoney);
+	
+	lblMsg = new TextLabel(uiLayer->world, font, textShader);
+	lblMsg->setText("message area");
+	vl->addChild(lblMsg);
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -141,8 +150,7 @@ void MY_Scene_Main::update(Step * _step){
 
 			if(cell->building->definition->id != currentType){
 				if(cell->building->definition->id == "empty" || currentType == "empty"){
-					removeBuilding(cursorPos);
-					placeBuilding(currentType, cursorPos);
+					placeBuilding(currentType, cursorPos, false);
 				}
 			}
 		}
@@ -272,7 +280,16 @@ void MY_Scene_Main::setType(std::string _buildingType){
 	selectorThing->mesh->replaceTextures(MY_ResourceManager::getBuilding(currentType)->meshes.at(0)->textures.at(0));
 }
 
-void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _position){	
+void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _position, bool _free){
+	
+	// if the player can't afford it, let them know and return early
+	if(!_free && money - MY_ResourceManager::getBuilding(_buildingType)->cost < 0){
+		lblMsg->setText("You can't afford this building.");
+		return;
+	}
+	
+	removeBuilding(_position);
+
 	Building * b = new Building(MY_ResourceManager::getBuilding(_buildingType), baseShader);
 	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f, 0, _position.z - GRID_SIZE_Z/2.f, false);
 	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
@@ -280,16 +297,30 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	if(b->definition->support && _position.y < floors.size()-1){
 		placeBuilding("empty", _position + glm::ivec3(0,1,0));
 	}
+
+	if(!_free){
+		money -= b->definition->cost;
+	}
 }
 
 void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	Cell * cell = getCell(_position);
-	floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
-	delete cell->building->firstParent();
-	cell->building = nullptr;
+	if(cell->building != nullptr){
+		floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
+		delete cell->building->firstParent();
+		cell->building = nullptr;
+	}
 }
 
 void MY_Scene_Main::placeFloor(){
+	float cost = 100;
+
+	// if the player can't afford it, let them know and return early
+	if(money - cost < 0){
+		lblMsg->setText("You can't afford a new floor.");
+		return;
+	}
+
 	unsigned long int y = floors.size();
 	Floor * floor = new Floor(y, baseShader);
 	buildingRoot->addChild(floor, false);
@@ -298,12 +329,14 @@ void MY_Scene_Main::placeFloor(){
 	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
 		for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
 			if(floors.size() == 1 || floors.at(floors.size()-2)->cells[x][z]->building->definition->support){
-				placeBuilding("empty", glm::ivec3(x,y,z));
+				placeBuilding("empty", glm::ivec3(x,y,z), true);
 			}else{
-				placeBuilding("blocked", glm::ivec3(x,y,z));
+				placeBuilding("blocked", glm::ivec3(x,y,z), true);
 			}
 		}
 	}
+
+	money -= 100;
 }
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){

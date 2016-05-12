@@ -5,31 +5,36 @@
       "id": "support",
       "meshes": ["support"],
       "textures": ["ROOM_1"],
-      "support": true
+      "support": true,
+      "cost": 100,
     },{
       "type":"building",
       "id": "stairs",
       "meshes": ["stairs"],
       "textures": ["ROOM_1"],
-      "support": false
+      "support": false,
+      "cost": 50
     },{
       "type":"building",
       "id": "room",
       "meshes": ["ROOM_1"],
       "textures": ["ROOM_1"],
-      "support": false
+      "support": false,
+      "cost": 50
     },{
       "type":"building",
       "id": "empty",
-      "meshes": ["empty1","empty2","empty3","empty4"],
+      "meshes": ["empty2","empty3","empty4"],
       "textures": ["ROOM_1"],
-      "support": false
+      "support": false,
+      "cost": -10
     },{
       "type":"building",
       "id": "blocked",
       "meshes": ["empty1"],
       "textures": ["ROOM_1"],
-      "support": false
+      "support": false,
+      "cost": 0
     }
   ]
 }
