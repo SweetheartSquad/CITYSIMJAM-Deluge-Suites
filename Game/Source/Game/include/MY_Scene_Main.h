@@ -35,7 +35,7 @@ public:
 	Timeout * gameplayTick;
 	// reduced each tick
 	// when it reaches zero, new tenants can arrive and it resets
-	int tenantTimer;
+	int caravanTimer;
 	
 	float food;
 	float morale;

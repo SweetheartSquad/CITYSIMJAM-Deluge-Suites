@@ -35,5 +35,10 @@
 			"weight":0
 		}
 	},
-	"tickDuration": 10 // seconds
+	"caravans":{
+		"delay": 3, // number of ticks between caravans
+		"max": 3
+	},
+	"tickDuration": 10, // seconds
+	"floodedWeight": 0.5 // percentage of weight reclaimed when a floor is flooded
 }

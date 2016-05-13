@@ -35,7 +35,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	capacity(10),
 	tenants(0),
 	waterLevel(0),
-	tenantTimer(3),
+	caravanTimer(3),
 	floodedFloors(0)
 {
 	// load stats from file
@@ -166,13 +166,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	vl->addChild(lblMsg);
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
-		tenantTimer -= 1;
-		if(tenantTimer == 0){
-			tenantTimer = 3;
-			for(unsigned long int i = 0; i < sweet::NumberUtils::randomInt(1,3); ++i){
-				if(capacity - tenants > 0.99f){
-					addTenant();
-				}
+		caravanTimer -= 1;
+		if(caravanTimer == 0){
+			caravanTimer = getStat("caravans.delay");
+			int numTenants = sweet::NumberUtils::randomInt(1,getStat("caravans.delay"));
+			for(unsigned long int i = 0; i < numTenants && (capacity - tenants > 0.99f); ++i){
+				addTenant();
 			}
 		}
 
@@ -218,6 +217,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	food = getStat("startingResources.food");
 	weight = getStat("startingResources.weight");
 	capacity = getStat("startingResources.capacity");
+	caravanTimer = getStat("caravans.delay");
 	for(unsigned long int i = 0; i < getStat("startingResources.tenants"); ++i){
 		addTenant();
 	}for(unsigned long int i = 0; i < getStat("startingResources.floors"); ++i){
@@ -560,7 +560,7 @@ void MY_Scene_Main::floodFloor(){
 	for(unsigned long int z = 0; z < GRID_SIZE_X; ++z){
 		const AssetBuilding * ab = floor->cells[x][z]->building->definition;
 		
-		weight -= ab->weight*0.5f;
+		weight -= ab->weight*getStat("floodedWeight");
 		foodGen -= ab->generates.food;
 		moraleGen -= ab->generates.morale;
 		moneyGen -= ab->generates.money;
