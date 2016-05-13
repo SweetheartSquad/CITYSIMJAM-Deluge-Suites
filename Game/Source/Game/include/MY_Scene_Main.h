@@ -36,6 +36,9 @@ public:
 	// reduced each tick
 	// when it reaches zero, new tenants can arrive and it resets
 	int caravanTimer;
+
+	// travels back and forth each game tick
+	MeshEntity * boat;
 	
 	float food;
 	float morale;
