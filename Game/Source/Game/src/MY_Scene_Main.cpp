@@ -165,7 +165,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lblMsg->setText("message area");
 	vl->addChild(lblMsg);
 
-	gameplayTick = new Timeout(10.f, [this](sweet::Event * _event){
+	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
 		tenantTimer -= 1;
 		if(tenantTimer == 0){
 			tenantTimer = 3;
@@ -477,15 +477,18 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 
 void MY_Scene_Main::placeFloor(bool _free){
 	if(!_free){
-		float cost = 100;
-
 		// if the player can't afford it, let them know and return early
-		if(money - cost < 0){
+		if(money - getStat("statChanges.floor.money") < 0){
 			alert("You can't afford a new floor.");
 			return;
 		}
-		money -= 100;
+		
+	}else{
+		// if it's a free floor, add the cost of one now
+		// to offset the costs applied later
+		money + getStat("statChanges.floor.money");
 	}
+	changeStat("floor", true);
 
 	unsigned long int y = floors.size();
 	Floor * floor = new Floor(y, baseShader);
@@ -511,22 +514,34 @@ Cell * MY_Scene_Main::getCell(glm::ivec3 _position){
 void MY_Scene_Main::addTenant(){
 	tenants += 1;
 	
-	moraleGen += -5;
-	foodGen += -5;
-	moneyGen += 5;
+	changeStat("tenant", true);
 	
 }
 void MY_Scene_Main::removeTenant(){
 	tenants -= 1;
-
-	moraleGen -= -5;
-	foodGen -= -5;
-	moneyGen -= 5;
+	
+	changeStat("tenant", false);
 
 	if(tenants <= FLT_EPSILON){
 		tenants = 0;
 		// TODO: game over
 	}
+}
+
+void MY_Scene_Main::changeStat(std::string _statChange, bool _positive){
+	float mult = _positive ? 1 : -1;
+	
+	std::string s = "statChanges." + _statChange + ".";
+
+	morale +=     mult * getStat(s + "morale");
+	food +=       mult * getStat(s + "food");
+	money +=      mult * getStat(s + "money");
+	moraleGen +=  mult * getStat(s + "moraleGen");
+	foodGen +=    mult * getStat(s + "foodGen");
+	moneyGen +=   mult * getStat(s + "moneyGen");
+	moneyGen +=   mult * getStat(s + "moneyGen");
+	weight +=     mult * getStat(s + "weight");
+
 }
 
 void MY_Scene_Main::alert(std::string _msg){

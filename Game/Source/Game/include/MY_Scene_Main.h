@@ -89,4 +89,6 @@ public:
 	// alerts the player with _msg
 	void alert(std::string _msg);
 	Timeout * alertTimeout;
+
+	void changeStat(std::string _statChange, bool _positive);
 };
