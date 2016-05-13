@@ -186,6 +186,17 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		morale += moraleGen;
 		food += foodGen;
 		waterLevel += weight;
+		// if out of food, remainder is taken as a hit to morale and there's a chance to lose tenants
+		if(food < 0){
+			morale += food;
+			food = 0;
+			for(unsigned long int i = 0; i < glm::ceil(tenants*0.75f); ++i){
+				if(sweet::NumberUtils::randomFloat() > morale/100.f){
+					removeTenant();
+				}
+			}
+		}
+
 
 		gameplayTick->restart();
 	});
