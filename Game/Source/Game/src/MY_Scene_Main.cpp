@@ -14,6 +14,7 @@
 #include <RenderSurface.h>
 #include <StandardFrameBuffer.h>
 #include <RenderOptions.h>
+#include <StringUtils.h>
 
 MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
@@ -37,6 +38,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	tenantTimer(3),
 	floodedFloors(0)
 {
+	// load stats from file
+	Json::Reader reader;
+	if(!reader.parse(sweet::FileUtils::readFile("assets/stats.json"), stats, false)){
+		Log::error("JSON Parsing failed.");
+	}
+
 
 
 	// memory management
@@ -59,22 +66,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	buildingRoot = new Transform();
 	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
 	childTransform->addChild(buildingRoot, false);
-
-	// add some floors by default
-	for(unsigned long int y = 0; y < 2; ++y){
-		placeFloor();
-	}
-
-	// add some tenants by default
-	for(unsigned long int i = 0; i < 6; ++i){
-		addTenant();
-	}
-	
-	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
-	for(auto & v : selectorThing->mesh->vertices){
-		v.alpha = 0.25f;
-	}
-	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
 
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
@@ -104,7 +95,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	btn->setMouseEnabled(true);
 	btn->setText("Place Floor");
 	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
-		placeFloor();
+		placeFloor(false);
 	});
 	
 	{
@@ -183,9 +174,9 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 			}
 		}
 
-		money += moneyGen;
-		morale += moraleGen;
-		food += foodGen;
+		money += moneyGen * getStat("tickMultipliers.money");
+		morale += moraleGen * getStat("tickMultipliers.morale");
+		food += foodGen * getStat("tickMultipliers.food");
 
 		// if out of food, remainder is taken as a hit to morale and there's a chance to lose tenants
 		if(food < 0){
@@ -199,7 +190,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		}
 
 		float oldWaterLevel = glm::floor(waterLevel);
-		waterLevel += weight*0.01f;
+		waterLevel += weight * getStat("tickMultipliers.weight");
 		while(waterLevel > oldWaterLevel + 0.99f){
 			oldWaterLevel += 1;
 			floodFloor();
@@ -214,6 +205,30 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		lblMsg->setText("");
 	});
 	childTransform->addChild(alertTimeout, false);
+
+
+
+
+
+	// setup starting stats
+	money = getStat("startingResources.money");
+	morale = getStat("startingResources.morale");
+	food = getStat("startingResources.food");
+	weight = getStat("startingResources.weight");
+	capacity = getStat("startingResources.capacity");
+	for(unsigned long int i = 0; i < getStat("startingResources.tenants"); ++i){
+		addTenant();
+	}for(unsigned long int i = 0; i < getStat("startingResources.floors"); ++i){
+		placeFloor(true);
+	}
+
+	
+	// add the selector thing (this needs to be done after floors are made)
+	selectorThing = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("cube")->meshes.at(0), baseShader);
+	for(auto & v : selectorThing->mesh->vertices){
+		v.alpha = 0.25f;
+	}
+	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -250,8 +265,8 @@ void MY_Scene_Main::update(Step * _step){
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	float ar = (float)sd.y / sd.x;
-	gameCam->bottom = 16*ar * -0.5f;
-	gameCam->top = 16*ar*0.5f;
+	gameCam->bottom = gameCam->getWidth()*ar * -0.5f;
+	gameCam->top = gameCam->getWidth()*ar*0.5f;
 	
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	glm::ivec3 cursorPos = getIsometricCursorPos();
@@ -458,13 +473,16 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	}
 }
 
-void MY_Scene_Main::placeFloor(){
-	float cost = 100;
+void MY_Scene_Main::placeFloor(bool _free){
+	if(!_free){
+		float cost = 100;
 
-	// if the player can't afford it, let them know and return early
-	if(money - cost < 0){
-		alert("You can't afford a new floor.");
-		return;
+		// if the player can't afford it, let them know and return early
+		if(money - cost < 0){
+			alert("You can't afford a new floor.");
+			return;
+		}
+		money -= 100;
 	}
 
 	unsigned long int y = floors.size();
@@ -481,8 +499,6 @@ void MY_Scene_Main::placeFloor(){
 			}
 		}
 	}
-
-	money -= 100;
 }
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){
@@ -561,4 +577,16 @@ void MY_Scene_Main::floodFloor(){
 		setFloor(currentFloor-1);
 	}
 
+}
+
+float MY_Scene_Main::getStat(std::string _statName){
+	std::vector<std::string> sv = sweet::StringUtils::split(_statName, '.');
+	Json::Value v = stats;
+	for(unsigned long int i = 0; i < sv.size(); ++i){
+		if(!v.isMember(sv.at(i))){
+			Log::error("stat doesn't exist");
+		}
+		v = v[sv.at(i)];
+	}
+	return v.asFloat();
 }

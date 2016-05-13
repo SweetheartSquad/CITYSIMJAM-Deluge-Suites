@@ -10,6 +10,9 @@ class TextLabel;
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
 public:
+	Json::Value stats;
+	float getStat(std::string _statName);
+
 	Shader * screenSurfaceShader;
 	RenderSurface * screenSurface;
 	StandardFrameBuffer * screenFBO;
@@ -72,8 +75,9 @@ public:
 	void removeBuilding(glm::ivec3 _position);
 
 	// adds a floor to the top of the building
-	void placeFloor();
+	void placeFloor(bool _free);
 	void setFloor(unsigned long int _floor);
+	void floodFloor();
 
 	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
 	Cell * getCell(glm::ivec3 _position);
@@ -85,7 +89,4 @@ public:
 	// alerts the player with _msg
 	void alert(std::string _msg);
 	Timeout * alertTimeout;
-
-
-	void floodFloor();
 };

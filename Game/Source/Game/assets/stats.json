@@ -1,0 +1,18 @@
+{
+	"startingResources":{
+		"food": 0,
+		"morale": 0,
+		"money": 1000,
+		"weight": 0,
+		"waterLevel": 0,
+		"tenants": 6,
+		"capacity": 10,
+		"floors": 4
+	},
+	"tickMultipliers":{
+		"food": 1, // food += foodGen * this multiplier
+		"morale": 1, // morale += moraleGen * this multiplier
+		"money": 1, // money += moneyGen * this multiplier
+		"weight": 0.01 // water level += weight * this multiplier
+	}
+}
