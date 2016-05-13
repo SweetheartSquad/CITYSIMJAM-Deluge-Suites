@@ -26,6 +26,11 @@
       "id": "FOOD_1",
       "src": "rooms/food1.obj"
     },
+    {
+      "type": "mesh",
+      "id": "SUPPLIES_1",
+      "src": "rooms/supplies1.obj"
+    },
   	{
   		"type": "mesh",
   		"id": "stairs",
@@ -85,6 +90,16 @@
     },
     {
       "type": "texture",
+      "id": "FOOD_1",
+      "src": "food1.png"
+    },
+    {
+      "type": "texture",
+      "id": "SUPPLIES_1",
+      "src": "supplies1.png"
+    },
+    {
+      "type": "texture",
       "id": "support",
       "src": "support.png"
     },
@@ -97,11 +112,6 @@
       "type": "texture",
       "id": "stairs",
       "src": "stairs.png"
-    },
-    {
-      "type": "texture",
-      "id": "food1",
-      "src": "food1.png"
     }
 
   ]

@@ -46,7 +46,7 @@
       "type":"building",
       "id": "foodcourt",
       "meshes": ["FOOD_1"],
-      "textures": ["food1"],
+      "textures": ["FOOD_1"],
       "support": true,
       "capacity": 0,
       "cost": 75,
@@ -55,6 +55,20 @@
         "food":20,
         "morale":0,
         "money":5
+      }
+    },{
+      "type":"building",
+      "id": "supplies",
+      "meshes": ["SUPPLIES_1"],
+      "textures": ["SUPPLIES_1"],
+      "support": true,
+      "capacity": 0,
+      "cost": 50,
+      "weight": 30,
+      "generates":{
+        "food":0,
+        "morale":10,
+        "money":0
       }
     },{
       "type":"building",
