@@ -45,6 +45,7 @@ public:
 	// resource generated per tick
 	float moneyGen, moraleGen, foodGen;
 
+	float foundationOffset;
 	float waterLevel;
 	MeshEntity * waterPlane;
 	ComponentShaderBase * waterShader;

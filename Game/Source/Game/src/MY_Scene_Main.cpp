@@ -86,13 +86,18 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(waterPlane);
 
 	// building base
+	MeshEntity * ground = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("ground")->meshes.at(0), baseShader);
+	ground->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	childTransform->addChild(ground)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
+	ground->freezeTransformation();
 	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
 	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
 	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
 	foundation->freezeTransformation();
+	foundationOffset = foundation->mesh->calcBoundingBox().height;
 
 	buildingRoot = new Transform();
-	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
+	buildingRoot->translate(0, foundationOffset, 0);
 	childTransform->addChild(buildingRoot, false);
 
 	// ui stuff
@@ -285,7 +290,8 @@ void MY_Scene_Main::update(Step * _step){
 		screenSurfaceShader->load();
 	}
 
-	waterPlane->firstParent()->translate(0,waterLevel-0.33f,0, false);
+	// move water visual upwards to match actual water level
+	waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.33f) - waterPlane->firstParent()->getTranslationVector().y),0);
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
@@ -326,7 +332,7 @@ void MY_Scene_Main::update(Step * _step){
 	for(unsigned long int i = 0; i < floors.size(); ++i){
 		floors.at(i)->updateVisibility(currentFloor + floodedFloors, angle);
 	}
-	camPos.y += ((currentFloor + floodedFloors) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
+	camPos.y += ((currentFloor + floodedFloors + foundationOffset) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
 
 	float angleDif = ((angle+0.5f)*90.f - currentAngle);
 
@@ -426,7 +432,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 
 	float d = glm::dot(norm, dir);
 	if(glm::abs(d) > FLT_EPSILON){
-		float t = glm::dot(glm::vec3(0,currentFloor + floodedFloors,0) - start, norm) / d;
+		float t = glm::dot(glm::vec3(0,currentFloor + floodedFloors + foundationOffset,0) - start, norm) / d;
 		if(glm::abs(t) > FLT_EPSILON){
 			cursorPos = start + dir * t;
 		}

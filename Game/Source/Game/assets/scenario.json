@@ -68,6 +68,11 @@
     },
     {
       "type": "mesh",
+      "id": "ground",
+      "src": "ground.obj"
+    },
+    {
+      "type": "mesh",
       "id": "cube",
       "src": "cube.obj"
     },
