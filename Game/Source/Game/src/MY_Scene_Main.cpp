@@ -34,7 +34,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	capacity(10),
 	tenants(0),
 	waterLevel(0),
-	tenantTimer(3)
+	tenantTimer(3),
+	floodedFloors(0)
 {
 
 
@@ -185,7 +186,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		money += moneyGen;
 		morale += moraleGen;
 		food += foodGen;
-		waterLevel += weight;
+
 		// if out of food, remainder is taken as a hit to morale and there's a chance to lose tenants
 		if(food < 0){
 			morale += food;
@@ -197,6 +198,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 			}
 		}
 
+		float oldWaterLevel = glm::floor(waterLevel);
+		waterLevel += weight*0.01f;
+		while(waterLevel > oldWaterLevel + 0.99f){
+			oldWaterLevel += 1;
+			floodFloor();
+		}
 
 		gameplayTick->restart();
 	});
@@ -277,9 +284,9 @@ void MY_Scene_Main::update(Step * _step){
 	}
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
-		floors.at(i)->updateVisibility(currentFloor, angle);
+		floors.at(i)->updateVisibility(currentFloor + floodedFloors, angle);
 	}
-	camPos.y += ((currentFloor) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
+	camPos.y += ((currentFloor + floodedFloors) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
 
 	float angleDif = ((angle+0.5f)*90.f - currentAngle);
 
@@ -379,7 +386,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 
 	float d = glm::dot(norm, dir);
 	if(glm::abs(d) > FLT_EPSILON){
-		float t = glm::dot(glm::vec3(0,currentFloor,0) - start, norm) / d;
+		float t = glm::dot(glm::vec3(0,currentFloor + floodedFloors,0) - start, norm) / d;
 		if(glm::abs(t) > FLT_EPSILON){
 			cursorPos = start + dir * t;
 		}
@@ -507,4 +514,51 @@ void MY_Scene_Main::removeTenant(){
 void MY_Scene_Main::alert(std::string _msg){
 	lblMsg->setText(_msg);
 	alertTimeout->restart();
+}
+
+
+void MY_Scene_Main::floodFloor(){
+	floodedFloors += 1;
+
+	// lose functionality of all buildings on floor
+	// and a fraction of the weight
+	Floor * floor = floors.front();
+	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_X; ++z){
+		const AssetBuilding * ab = floor->cells[x][z]->building->definition;
+		
+		weight -= ab->weight*0.5f;
+		foodGen -= ab->generates.food;
+		moraleGen -= ab->generates.morale;
+		moneyGen -= ab->generates.money;
+		capacity -= ab->capacity;
+	}
+	}
+
+	// if tenants are now higher than capacity, take a morale hit
+	morale -= glm::min(0.f, tenants - capacity);
+
+	// based on morale, possibly lose some tenants
+	for(unsigned long int i = 0; i < glm::ceil(tenants*0.75f); ++i){
+		if(sweet::NumberUtils::randomFloat() > morale/100.f){
+			removeTenant();
+		}
+	}
+
+	floor->updateVisibility(floor->height+1,angle);
+	floors.erase(floors.begin());
+
+
+	// if this was your last floor, trigger gameover
+	if(floors.size() == 0){
+		// TODO: gameover
+		return;
+	}
+
+	if(currentFloor == 0){
+		setFloor(0);
+	}else{
+		setFloor(currentFloor-1);
+	}
+
 }

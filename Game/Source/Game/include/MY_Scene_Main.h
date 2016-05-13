@@ -21,6 +21,7 @@ public:
 
 	// the floor which the player is looking at
 	int currentFloor;
+	int floodedFloors;
 	int angle;
 	float currentAngle;
 	
@@ -84,4 +85,7 @@ public:
 	// alerts the player with _msg
 	void alert(std::string _msg);
 	Timeout * alertTimeout;
+
+
+	void floodFloor();
 };
