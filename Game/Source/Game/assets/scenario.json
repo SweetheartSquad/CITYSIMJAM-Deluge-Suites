@@ -73,11 +73,31 @@
     },
 
 
-  	{
-  		"type": "texture",
-  		"id": "ROOM_1",
-  		"src": "room1.png"
-  	}
+    {
+      "type": "texture",
+      "id": "ROOM_1",
+      "src": "room1.png"
+    },
+    {
+      "type": "texture",
+      "id": "support",
+      "src": "support.png"
+    },
+    {
+      "type": "texture",
+      "id": "empty",
+      "src": "empty.png"
+    },
+    {
+      "type": "texture",
+      "id": "stairs",
+      "src": "stairs.png"
+    },
+    {
+      "type": "texture",
+      "id": "food1",
+      "src": "food1.png"
+    }
 
   ]
 }
