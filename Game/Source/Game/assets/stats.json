@@ -40,5 +40,6 @@
 		"max": 3
 	},
 	"tickDuration": 10, // seconds
-	"floodedWeight": 0.5 // percentage of weight reclaimed when a floor is flooded
+	"floodedWeight": 0.5, // percentage of weight reclaimed when a floor is flooded,
+	"bg": {"r":0.3,"g":0.8,"b":1} // background colour
 }

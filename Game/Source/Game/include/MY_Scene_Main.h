@@ -46,6 +46,8 @@ public:
 	float moneyGen, moraleGen, foodGen;
 
 	float waterLevel;
+	MeshEntity * waterPlane;
+	ComponentShaderBase * waterShader;
 
 	float tenants;
 	// maximum number of tenants

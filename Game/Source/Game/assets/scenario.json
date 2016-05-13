@@ -8,6 +8,13 @@
       "antiAliased": false
     },
 
+    {
+      "type": "mesh",
+      "id": "water",
+      "src": "water.obj"
+    },
+
+
 
     {
       "type": "mesh",

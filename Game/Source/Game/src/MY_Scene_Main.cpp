@@ -16,6 +16,12 @@
 #include <RenderOptions.h>
 #include <StringUtils.h>
 
+#include <shader\ShaderComponentTexture.h>
+#include <shader\ShaderComponentDiffuse.h>
+#include <shader\ShaderComponentDepthOffset.h>
+#include <shader\ShaderComponentMVP.h>
+#include <ShaderComponentWater.h>
+
 MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
 	currentFloor(0),
@@ -51,27 +57,43 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	screenSurfaceShader->incrementReferenceCount();
 	screenFBO->incrementReferenceCount();
 
-
+	// camera
 	gameCam = new OrthographicCamera(-8,8, -4.5,4.5, -100,100);
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
 	activeCamera = gameCam;
-
-	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
-	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
-	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
-	foundation->freezeTransformation();
-
-
-	buildingRoot = new Transform();
-	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
-	childTransform->addChild(buildingRoot, false);
 
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
 
 	gameCam->update(&sweet::step);
+
+
+	// water
+	waterShader = new ComponentShaderBase(true);
+	//waterShader->addComponent(new ShaderComponentMVP(waterShader));
+	waterShader->addComponent(new ShaderComponentWater(waterShader));
+	//waterShader->addComponent(new ShaderComponentDiffuse(waterShader));
+	waterShader->addComponent(new ShaderComponentDepthOffset(waterShader));
+	waterShader->addComponent(new ShaderComponentTexture(waterShader));
+	waterShader->compileShader();
+	waterShader->nodeName = "water shader";
+	waterShader->incrementReferenceCount();
+
+	waterPlane = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("water")->meshes.at(0), waterShader);
+	//waterPlane->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("water")->texture);
+	childTransform->addChild(waterPlane);
+
+	// building base
+	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
+	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
+	foundation->freezeTransformation();
+
+	buildingRoot = new Transform();
+	buildingRoot->translate(0, foundation->mesh->calcBoundingBox().height, 0);
+	childTransform->addChild(buildingRoot, false);
 
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
@@ -229,12 +251,15 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		v.alpha = 0.25f;
 	}
 	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
+
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
 	// we need to destruct the scene elements before the physics world to avoid memory issues
 	deleteChildTransform();
 	
+	waterShader->decrementAndDelete();
+
 	// memory management
 	screenSurface->decrementAndDelete();
 	screenSurfaceShader->decrementAndDelete();
@@ -260,7 +285,7 @@ void MY_Scene_Main::update(Step * _step){
 		screenSurfaceShader->load();
 	}
 
-
+	waterPlane->firstParent()->translate(0,waterLevel-0.33f,0, false);
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
@@ -368,7 +393,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
-	_renderOptions->setClearColour(1,1,0,1);
+	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
 	// unbind our screen framebuffer, rebinding the previously bound framebuffer
