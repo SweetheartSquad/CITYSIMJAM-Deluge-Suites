@@ -75,12 +75,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
-	vl->setRenderMode(kTEXTURE);
+	//vl->setRenderMode(kTEXTURE);
 	uiLayer->addChild(vl);
 
 	for(auto b : MY_ResourceManager::buildings->assets.at("building")){
 		TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
-		//btn->setRenderMode(kTEXTURE);
+		btn->setRenderMode(kTEXTURE);
 		vl->addChild(btn);
 		btn->setPadding(2);
 		btn->setMargin(2);
@@ -102,62 +102,60 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	
 	{
 	TextLabelControlled * lbl = new TextLabelControlled(&waterLevel, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "water level: ";
-	lbl->suffix = " floors";
+	lbl->prefix = L"water level: ";
+	lbl->suffix = L" floors";
 	lbl->decimals = 1;
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "weight: ";
-	lbl->suffix = "";
+	lbl->prefix = L"weight: ";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "cashmoney: ";
-	lbl->suffix = " dollas";
+	lbl->prefix = L"cashmoney: ";
+	lbl->suffix = L" dollas";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&food, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "food: ";
-	lbl->suffix = " foods";
+	lbl->prefix = L"food: ";
+	lbl->suffix = L" foods";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "morale: ";
-	lbl->suffix = "";
+	lbl->prefix = L"morale: ";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 		TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "moraleGen: ";
-	lbl->suffix = "/tick";
+	lbl->prefix = L"moraleGen: ";
+	lbl->suffix = L"/tick";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "foodGen: ";
-	lbl->suffix = "/tick";
+	lbl->prefix = L"foodGen: ";
+	lbl->suffix = L"/tick";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "moneyGen: ";
-	lbl->suffix = "/tick";
+	lbl->prefix = L"moneyGen: ";
+	lbl->suffix = L"/tick";
 	vl->addChild(lbl);
-	//lbl->setRenderMode(kTEXTURE);
+	lbl->setRenderMode(kTEXTURE);
 	}
 	{TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "Population: ";
-	lbl->suffix = " tenants";
+	lbl->prefix = L"Population: ";
+	lbl->suffix = L" tenants";
 	vl->addChild(lbl);
 	}
 	{TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = "Capacity: ";
-	lbl->suffix = " tenants";
+	lbl->prefix = L"Capacity: ";
+	lbl->suffix = L" tenants";
 	vl->addChild(lbl);
 	}
 	
