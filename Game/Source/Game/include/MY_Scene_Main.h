@@ -72,6 +72,7 @@ public:
 
 	// adds a floor to the top of the building
 	void placeFloor();
+	void setFloor(unsigned long int _floor);
 
 	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
 	Cell * getCell(glm::ivec3 _position);

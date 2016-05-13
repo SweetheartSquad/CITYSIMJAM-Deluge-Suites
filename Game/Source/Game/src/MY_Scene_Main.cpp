@@ -308,18 +308,22 @@ void MY_Scene_Main::update(Step * _step){
 		}
 	}
 	if(floorChange != 0){
-		currentFloor += glm::sign(floorChange);
-
-		// update selector to the current floor
-		selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
-		floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing->firstParent());
-		
-		// trigger animations
-		if(currentFloor != 0){
-			floors.at(currentFloor-1)->boing->restart();
-		}
-		floors.at(currentFloor)->boing->restart();
+		setFloor(currentFloor + glm::sign(floorChange));
 	}
+}
+
+void MY_Scene_Main::setFloor(unsigned long int _floor){
+	currentFloor = _floor;
+	
+	// update selector to the current floor
+	selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
+	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing->firstParent());
+		
+	// trigger animations
+	if(currentFloor != 0){
+		floors.at(currentFloor-1)->boing->restart();
+	}
+	floors.at(currentFloor)->boing->restart();
 }
 
 
