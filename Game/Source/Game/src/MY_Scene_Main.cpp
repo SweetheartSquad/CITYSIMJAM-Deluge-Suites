@@ -20,7 +20,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	MY_Scene_Base(_game),
 	currentFloor(0),
 	angle(0),
-	currentAngle(0),
+	currentAngle(45),
 	currentType("empty"),
 	screenSurfaceShader(new Shader("assets/RenderSurface_1", false, true)),
 	screenSurface(new RenderSurface(screenSurfaceShader, true)),
@@ -70,6 +70,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
+
+	gameCam->update(&sweet::step);
 
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
