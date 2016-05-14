@@ -4,10 +4,10 @@
 	"fps" : 60,
 	"fullscreen" : false,
 	"monitor": 0,
-	/*"resolution": {
-		"x": 1728,
-		"y": 972
-	},*/
+	"resolution": {
+		"x": 800,
+		"y": 512
+	},
 
 	"gain":{
 		"master": 1,
