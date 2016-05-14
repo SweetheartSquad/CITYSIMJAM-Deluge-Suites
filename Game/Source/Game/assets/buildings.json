@@ -72,6 +72,20 @@
       }
     },{
       "type":"building",
+      "id": "balloon",
+      "meshes": ["balloon"],
+      "textures": ["balloon"],
+      "support": true,
+      "capacity": 0,
+      "cost": 50,
+      "weight": -20,
+      "generates":{
+        "food":0,
+        "morale":5,
+        "money":0
+      }
+    },{
+      "type":"building",
       "id": "walkway",
       "meshes": ["empty1"],
       "textures": ["empty"],
@@ -88,7 +102,7 @@
       "type":"building",
       "id": "empty",
       "meshes": ["empty2","empty3","empty4"],
-      "textures": ["ROOM_1"],
+      "textures": ["empty"],
       "support": false,
       "empty": true,
       "aerial": true,

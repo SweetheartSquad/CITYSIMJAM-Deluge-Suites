@@ -109,6 +109,11 @@
   	},
     {
       "type": "mesh",
+      "id": "balloon",
+      "src": "balloon.obj"
+    },
+    {
+      "type": "mesh",
       "id": "wall",
       "src": "wall.obj"
     },
@@ -161,6 +166,11 @@
     },
     {
       "type": "texture",
+      "id": "balloon",
+      "src": "balloon.png"
+    },
+    {
+      "type": "texture",
       "id": "empty",
       "src": "empty.png"
     },
@@ -168,6 +178,16 @@
       "type": "texture",
       "id": "stairs",
       "src": "stairs.png"
+    },
+    {
+      "type": "texture",
+      "id": "wall",
+      "src": "wall.png"
+    },
+    {
+      "type": "texture",
+      "id": "foundation",
+      "src": "foundation.png"
     },
     {
       "type": "texture",
