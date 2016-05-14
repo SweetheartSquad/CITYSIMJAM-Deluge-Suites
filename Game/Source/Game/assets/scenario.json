@@ -76,8 +76,8 @@
       "src":"btn/supplies.png"
     },{
       "type":"texture",
-      "id":"btn-aerial support",
-      "src":"btn/aerial support.png"
+      "id":"btn-balloon",
+      "src":"btn/balloon.png"
     },
 
 
@@ -110,7 +110,7 @@
     {
       "type": "mesh",
       "id": "balloon",
-      "src": "balloon.obj"
+      "src": "rooms/balloon.obj"
     },
     {
       "type": "mesh",

@@ -129,7 +129,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	std::vector<std::string> btns;
 	btns.push_back("support");
-	btns.push_back("aerial support");
+	btns.push_back("balloon");
 	btns.push_back("room");
 	btns.push_back("stairs");
 	btns.push_back("foodcourt");
