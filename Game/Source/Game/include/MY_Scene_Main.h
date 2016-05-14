@@ -7,6 +7,8 @@ class RenderSurface;
 class StandardFrameBuffer;
 class TextLabel;
 
+#define UI_RATIO 0.33f
+
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
 public:

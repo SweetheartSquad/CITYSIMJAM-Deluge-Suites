@@ -333,7 +333,7 @@ void MY_Scene_Main::update(Step * _step){
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
-	float ar = (float)sd.y / (sd.x*2/3);
+	float ar = (float)sd.y / (sd.x*(1.f - UI_RATIO));
 	gameCam->bottom = gameCam->getWidth()*ar * -0.5f;
 	gameCam->top = gameCam->getWidth()*ar*0.5f;
 	
@@ -437,7 +437,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
-	_renderOptions->setViewPort(screenFBO->width/3,0,screenFBO->width*2/3, screenFBO->height);
+	_renderOptions->setViewPort(screenFBO->width*UI_RATIO,0,screenFBO->width*(1.f - UI_RATIO), screenFBO->height);
 	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
@@ -465,7 +465,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 	// calculate in-game isometric cursor position
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
-	glm::vec3 start = gameCam->screenToWorld(glm::vec3((mouse->mouseX()-sd.x/3)/(sd.x*2/3), mouse->mouseY()/sd.y, gameCam->nearClip), sd);
+	glm::vec3 start = gameCam->screenToWorld(glm::vec3((mouse->mouseX()-sd.x*UI_RATIO)/(sd.x*(1.f - UI_RATIO)), mouse->mouseY()/sd.y, gameCam->nearClip), sd);
 	glm::vec3 dir = gameCam->forwardVectorRotated;
 	glm::vec3 norm(0,1,0);
 	glm::vec3 cursorPos(0);
