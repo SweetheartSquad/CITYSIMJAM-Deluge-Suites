@@ -123,20 +123,35 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexDown);
 	};auto btnOnOutOrUp = [btnTexNormal](sweet::Event * _event){
 		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexNormal);
+	};auto btnOnClick = [this](sweet::Event * _event){
+		setType(((NodeUI *)(_event->getIntData("target")))->nodeName);
 	};
-	for(unsigned long int i = 0; i < 3; ++i){
+
+	std::vector<std::string> btns;
+	btns.push_back("support");
+	btns.push_back("stairs");
+	btns.push_back("foodcourt");
+	btns.push_back("empty");
+	for(auto s : btns){
 		NodeUI * t = new NodeUI(uiLayer->world);
 		hl->addChild(t);
 		t->setMouseEnabled(true);
 		t->setWidth(32);
 		t->setHeight(32);
 		t->setMargin(2);
+		t->nodeName = s;
+		NodeUI * icon = new NodeUI(uiLayer->world);
+		t->addChild(icon);
+		icon->setWidth(1.f);
+		icon->setHeight(1.f);
+		icon->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("btn-"+s)->texture);
 		
 		t->background->mesh->pushTexture2D(btnTexNormal);
 		t->eventManager->addEventListener("mousein", btnOnIn);
 		t->eventManager->addEventListener("mousedown", btnOnDown);
 		t->eventManager->addEventListener("mouseup", btnOnOutOrUp);
 		t->eventManager->addEventListener("mouseout", btnOnOutOrUp);
+		t->eventManager->addEventListener("click", btnOnClick);
 	}
 	
 

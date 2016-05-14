@@ -39,15 +39,33 @@
     {
       "type":"texture",
       "id":"btn-normal",
-      "src":"btn-normal.png"
+      "src":"btn/btn-normal.png"
     },{
       "type":"texture",
       "id":"btn-over",
-      "src":"btn-over.png"
+      "src":"btn/btn-over.png"
     },{
       "type":"texture",
       "id":"btn-down",
-      "src":"btn-down.png"
+      "src":"btn/btn-down.png"
+    },
+
+    {
+      "type":"texture",
+      "id":"btn-support",
+      "src":"btn/support.png"
+    },{
+      "type":"texture",
+      "id":"btn-stairs",
+      "src":"btn/stairs.png"
+    },{
+      "type":"texture",
+      "id":"btn-foodcourt",
+      "src":"btn/food.png"
+    },{
+      "type":"texture",
+      "id":"btn-empty",
+      "src":"btn/x.png"
     },
 
 
