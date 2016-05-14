@@ -24,7 +24,7 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 		wallT1->insertVertices(*wallO1);
 		wallT2->insertVertices(*wallO1);
 
-		wallO1->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+		wallO1->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("wall")->texture);
 		wallO2->pushTexture2D(wallO1->textures.at(0));
 		wallT1->pushTexture2D(wallO1->textures.at(0));
 		wallT2->pushTexture2D(wallO1->textures.at(0));
@@ -51,7 +51,7 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 	}
 	if(floorPlane == nullptr){
 		floorPlane = MeshFactory::getPlaneMesh(GRID_SIZE_X/2.f, GRID_SIZE_Z/2.f);
-		floorPlane->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+		floorPlane->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("empty")->texture);
 		for(auto & v : floorPlane->vertices){
 			v.z = v.y;
 			v.y = 0;
