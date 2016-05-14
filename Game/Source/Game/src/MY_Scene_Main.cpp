@@ -604,7 +604,8 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 
 	// render the scene
 	_renderOptions->setViewPort(UI_PANEL_WIDTH,0,screenFBO->width - UI_PANEL_WIDTH, screenFBO->height);
-	_renderOptions->setClearColour(bgColour.r, bgColour.g, bgColour.b,1);
+	float f = (1.f-(gameCam->firstParent()->getTranslationVector().y - waterPlane->firstParent()->getTranslationVector().y)/50.f) * (glm::sin(sweet::lastTimestamp*(1.f/gameplayTick->targetSeconds*3.f))*0.5f+1);
+	_renderOptions->setClearColour(bgColour.r*f, bgColour.g*f, bgColour.b*f,1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
 	// unbind our screen framebuffer, rebinding the previously bound framebuffer
