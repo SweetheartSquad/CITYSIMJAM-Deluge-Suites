@@ -616,8 +616,10 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 
 	const AssetBuilding * ab = MY_ResourceManager::getBuilding(_buildingType);
 	Building * b = new Building(ab, baseShader);
-	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f - 1, 0, _position.z - GRID_SIZE_Z/2.f - 1, false);
-	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
+	Floor * floor = floors.at(_position.y);
+	Transform * p = (ab->aerial ? floor->wallContainerOpaque : floor->cellContainer);
+	p->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f - 1, 0, _position.z - GRID_SIZE_Z/2.f - 1, false);
+	floor->cells[_position.x][_position.z]->building = b;
 	
 	if(ab->aerial){
 		float angle = 0;
@@ -659,7 +661,9 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	Cell * cell = getCell(_position);
 	if(cell->building != nullptr){
-		floors.at(_position.y)->cellContainer->removeChild(cell->building->firstParent());
+		Floor * floor = floors.at(_position.y);
+		Transform * p = (cell->building->definition->aerial ? floor->wallContainerOpaque : floor->cellContainer);
+		p->removeChild(cell->building->firstParent());
 		const AssetBuilding * ab = cell->building->definition;
 		
 		weight -= ab->weight;
