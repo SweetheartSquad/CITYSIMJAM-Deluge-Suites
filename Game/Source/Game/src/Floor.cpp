@@ -112,10 +112,11 @@ Floor::~Floor(){
 	}
 }
 
+#define RANGE 10
 void Floor::updateVisibility(unsigned long int _height, unsigned long int _angle){
-	
-	wallContainerTransparent->setVisible(_height < height); // transparent walls visible above current floor
-	wallContainerOpaque->setVisible(_height >= height); // opaque walls visible on current floor and below
+	setVisible(glm::abs((float)_height - height) < RANGE);
+	wallContainerTransparent->setVisible(_height < height || _height - height == RANGE-1); // transparent walls visible above current floor
+	wallContainerOpaque->setVisible(_height >= height && _height - height != RANGE-1); // opaque walls visible on current floor and below
 	cellContainer->setVisible(_height == height); // cells visible on current floor
 
 	if(height == _height){
