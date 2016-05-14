@@ -36,11 +36,11 @@
       "type": "mesh",
       "id": "wall",
       "src": "wall.obj"
-    },/*{
+    },{
       "type": "texture",
       "id": "wall",
       "src": "wall.png"
-    },*/
+    },
 
     {
       "type": "mesh",
