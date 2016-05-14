@@ -87,23 +87,9 @@
       }
     },{
       "type":"building",
-      "id": "walkway",
-      "meshes": ["empty1"],
-      "textures": ["empty"],
-      "support": true,
-      "capacity": 0,
-      "cost": 50,
-      "weight": 5,
-      "generates":{
-        "food":0,
-        "morale":1,
-        "money":0
-      }
-    },{
-      "type":"building",
       "id": "empty",
-      "meshes": ["empty2","empty3","empty4"],
-      "textures": ["ROOM_1"],
+      "meshes": ["empty1"],
+      "textures": ["transparent"],
       "support": false,
       "empty": true,
       "aerial": true,

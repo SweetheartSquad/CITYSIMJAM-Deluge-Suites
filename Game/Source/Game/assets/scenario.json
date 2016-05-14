@@ -197,6 +197,11 @@
       "type": "texture",
       "id": "red",
       "src": "red.png"
+    },
+    {
+      "type": "texture",
+      "id": "transparent",
+      "src": "transparent.png"
     }
 
   ]
