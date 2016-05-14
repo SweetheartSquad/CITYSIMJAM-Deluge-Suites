@@ -5,7 +5,7 @@
 
 class RenderSurface;
 class StandardFrameBuffer;
-class TextLabel;
+class TextArea;
 
 #define UI_PANEL_WIDTH 256
 #define UI_PANEL_HEIGHT 512
@@ -19,6 +19,9 @@ public:
 	Shader * screenSurfaceShader;
 	RenderSurface * screenSurface;
 	StandardFrameBuffer * screenFBO;
+	
+	ComponentShaderText * redTextShader;
+	ComponentShaderText * greenTextShader;
 
 	OrthographicCamera * gameCam;
 
@@ -37,7 +40,7 @@ public:
 	float currentAngle;
 	
 	MeshEntity * selectorThing;
-	TextLabel * lblMsg;
+	TextArea * lblMsg;
 
 	// handles generated resources, water level rising, etc.
 	Timeout * gameplayTick;

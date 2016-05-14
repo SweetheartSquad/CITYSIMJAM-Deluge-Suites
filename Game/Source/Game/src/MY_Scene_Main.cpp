@@ -51,8 +51,12 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		Log::error("JSON Parsing failed.");
 	}
 
-
-
+	
+	redTextShader = new ComponentShaderText(true);
+	greenTextShader = new ComponentShaderText(true);
+	redTextShader->textComponent->setColor(glm::vec4(1.0f, 0.5f, 0.5f, 1.f));
+	greenTextShader->textComponent->setColor(glm::vec4(0.5f, 1.0f, 0.5f, 1.f));
+	
 	// memory management
 	screenSurface->incrementReferenceCount();
 	screenSurfaceShader->incrementReferenceCount();
@@ -182,77 +186,69 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	test->setWidth(5);
 	test->setHeight(5);*/
 
-	int hoffset = 160;
+	float hoffset = 160.f;
 	{
-	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
+	TextLabelControlled * lbl = new TextLabelControlled(&money, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	uiPanel->addChild(lbl);
 	lbl->boxSizing = kCONTENT_BOX;
-	lbl->setMarginTop(38);
+	lbl->setMarginTop(28);
 	lbl->setMarginLeft(hoffset);
 	lbl->setHeight(10);
 	lbl->decimals = 0;
-	lbl->verticalAlignment = kTOP;
 	lbl->setRenderMode(kTEXTURE);
+	lbl->setMouseEnabled(true);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
 	uiPanel->addChild(lbl);
 	lbl->boxSizing = kCONTENT_BOX;
-	//lbl->setMarginTop(28);
+	lbl->setMarginTop(2);
 	lbl->setMarginLeft(hoffset);
 	lbl->setHeight(10);
 	lbl->setRenderMode(kTEXTURE);
-	lbl->verticalAlignment = kTOP;
 	lbl->decimals = 0;
-	}/*{
-	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"cashmoney: ";
-	lbl->suffix = L" dollas";
+	lbl->setMouseEnabled(true);
+	}{
+	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, 100, uiLayer->world, font, textShader);
 	uiPanel->addChild(lbl);
+	lbl->boxSizing = kCONTENT_BOX;
+	lbl->setMarginTop(2);
+	lbl->setMarginLeft(hoffset);
+	lbl->setHeight(10);
 	lbl->setRenderMode(kTEXTURE);
+	lbl->decimals = 0;
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&food, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"food: ";
-	lbl->suffix = L" foods";
 	uiPanel->addChild(lbl);
+	lbl->boxSizing = kCONTENT_BOX;
+	lbl->setMarginTop(2);
+	lbl->setMarginLeft(hoffset);
+	lbl->setHeight(10);
 	lbl->setRenderMode(kTEXTURE);
+	lbl->decimals = 0;
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"morale: ";
+	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, redTextShader);
 	uiPanel->addChild(lbl);
+	lbl->boxSizing = kCONTENT_BOX;
+	lbl->prefix = L"-";
+	lbl->setMarginTop(2);
+	lbl->setMarginLeft(hoffset);
+	lbl->setHeight(10);
 	lbl->setRenderMode(kTEXTURE);
-	}{
-		TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"moraleGen: ";
-	lbl->suffix = L"/tick";
-	uiPanel->addChild(lbl);
-	lbl->setRenderMode(kTEXTURE);
-	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"foodGen: ";
-	lbl->suffix = L"/tick";
-	uiPanel->addChild(lbl);
-	lbl->setRenderMode(kTEXTURE);
-	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"moneyGen: ";
-	lbl->suffix = L"/tick";
-	uiPanel->addChild(lbl);
-	lbl->setRenderMode(kTEXTURE);
+	lbl->decimals = 0;
 	}
-	{TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"Population: ";
-	lbl->suffix = L" tenants";
-	uiPanel->addChild(lbl);
-	}
-	{TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"Capacity: ";
-	lbl->suffix = L" tenants";
-	uiPanel->addChild(lbl);
-	}*/
 	
-	lblMsg = new TextLabel(uiLayer->world, font, textShader);
-	lblMsg->setText("message area");
+	lblMsg = new TextArea(uiLayer->world, font, textShader);
 	uiPanel->addChild(lblMsg);
+	lblMsg->setWidth(UI_PANEL_WIDTH);
+	lblMsg->boxSizing = kBORDER_BOX;
+	lblMsg->setHeight(77*2);
+	lblMsg->setMargin(4,0);
+	lblMsg->setMarginTop(28);
+	lblMsg->setWrapMode(kWORD);
+	lblMsg->setRenderMode(kTEXTURE);
+	lblMsg->verticalAlignment = kTOP;
+	lblMsg->setText("Lorem ipsem dolor sit amet. Blah blhhadi wajd woadjw iadjowa jdwad jwaodjwaiodj awidoj awodj waij");
+	lblMsg->setMouseEnabled(true);
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
 		caravanTimer -= 1;
