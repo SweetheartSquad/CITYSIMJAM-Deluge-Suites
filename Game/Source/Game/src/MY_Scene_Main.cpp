@@ -619,11 +619,11 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 			angle = 180;
 			b->firstParent()->translate(1,0,1);
 		}else if(_position.z == 0){
-			angle = 90;
-			b->firstParent()->translate(0,0,1);
-		}else if(_position.z  == GRID_SIZE_Z+1){
 			angle = 270;
 			b->firstParent()->translate(1,0,0);
+		}else if(_position.z  == GRID_SIZE_Z+1){
+			angle = 90;
+			b->firstParent()->translate(0,0,1);
 		}
 		b->firstParent()->rotate(angle, 0,1,0, kOBJECT);
 	}
