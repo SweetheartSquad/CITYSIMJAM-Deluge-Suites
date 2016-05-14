@@ -103,17 +103,33 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(buildingRoot, false);
 
 	// ui stuff
-	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
-	vl->setRationalHeight(1.f, uiLayer);
-	vl->setRationalWidth(UI_RATIO, uiLayer);
-	vl->setBackgroundColour(1,1,1,1);
+	VerticalLinearLayout * uiPanel = new VerticalLinearLayout(uiLayer->world);
+	uiPanel->setPixelHeight(UI_PANEL_HEIGHT);
+	uiPanel->setPixelWidth(UI_PANEL_WIDTH);
+	uiPanel->setBackgroundColour(1,1,1,1);
+	uiPanel->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("uiPanel")->texture);
+	uiPanel->verticalAlignment = kTOP;
 	//vl->setRenderMode(kTEXTURE);
-	uiLayer->addChild(vl);
+	uiLayer->addChild(uiPanel);
 
-	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
-	vl->addChild(hl);
-	hl->setRationalWidth(1.f, vl);
-	
+	HorizontalLinearLayout * buildButtons = new HorizontalLinearLayout(uiLayer->world);
+	uiPanel->addChild(buildButtons);
+	buildButtons->setRationalWidth(1.f, uiPanel);
+	buildButtons->marginLeft.setPixelSize(2);
+	buildButtons->marginTop.setPixelSize(16);
+
+	TextArea * buildDescription = new TextArea(uiLayer->world, font, textShader);
+	uiPanel->addChild(buildDescription);
+	buildDescription->setWidth(UI_PANEL_WIDTH);
+	buildDescription->boxSizing = kBORDER_BOX;
+	buildDescription->setHeight(77*2);
+	buildDescription->setMargin(4,0);
+	buildDescription->setWrapMode(kWORD);
+	buildDescription->setRenderMode(kTEXTURE);
+	buildDescription->verticalAlignment = kTOP;
+	buildDescription->setText("Lorem ipsem dolor sit amet. Blah blhhadi wajd woadjw iadjowa jdwad jwaodjwaiodj awidoj awodj waij");
+	buildDescription->setMouseEnabled(true);
+
 	Texture * btnTexNormal = MY_ResourceManager::globalAssets->getTexture("btn-normal")->texture;
 	Texture * btnTexOver = MY_ResourceManager::globalAssets->getTexture("btn-over")->texture;
 	Texture * btnTexDown = MY_ResourceManager::globalAssets->getTexture("btn-down")->texture;
@@ -137,7 +153,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	btns.push_back("empty");
 	for(auto s : btns){
 		NodeUI * t = new NodeUI(uiLayer->world);
-		hl->addChild(t);
+		buildButtons->addChild(t);
 		t->setMouseEnabled(true);
 		t->setWidth(32);
 		t->setHeight(32);
@@ -158,90 +174,85 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	}
 	
 
-	for(auto b : MY_ResourceManager::buildings->assets.at("building")){
-		TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
-		btn->setRenderMode(kTEXTURE);
-		vl->addChild(btn);
-		btn->setPadding(2);
-		btn->setMargin(2);
-		btn->setBackgroundColour(1,0,0,1);
-		btn->setMouseEnabled(true);
-		btn->setText(b.first);
-		btn->eventManager->addEventListener("click", [this, b](sweet::Event * _event){
-			setType(b.first);
-		});
+	/*NodeUI * test = new NodeUI(uiLayer->world);
+	uiPanel->addChild(test);
+	test->boxSizing = kCONTENT_BOX;
+	test->setMarginTop(28);
+	test->setMarginLeft(160);
+	test->setWidth(5);
+	test->setHeight(5);*/
 
-	}
-	TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
-	vl->addChild(btn);
-	btn->setMouseEnabled(true);
-	btn->setText("Place Floor");
-	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
-		placeFloor();
-	});
-	
+	int hoffset = 160;
 	{
-	TextLabelControlled * lbl = new TextLabelControlled(&waterLevel, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"water level: ";
-	lbl->suffix = L" floors";
-	lbl->decimals = 1;
-	vl->addChild(lbl);
+	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
+	uiPanel->addChild(lbl);
+	lbl->boxSizing = kCONTENT_BOX;
+	lbl->setMarginTop(38);
+	lbl->setMarginLeft(hoffset);
+	lbl->setHeight(10);
+	lbl->decimals = 0;
+	lbl->verticalAlignment = kTOP;
 	lbl->setRenderMode(kTEXTURE);
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, textShader);
-	lbl->prefix = L"weight: ";
-	vl->addChild(lbl);
+	TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
+	uiPanel->addChild(lbl);
+	lbl->boxSizing = kCONTENT_BOX;
+	//lbl->setMarginTop(28);
+	lbl->setMarginLeft(hoffset);
+	lbl->setHeight(10);
 	lbl->setRenderMode(kTEXTURE);
-	}{
+	lbl->verticalAlignment = kTOP;
+	lbl->decimals = 0;
+	}/*{
 	TextLabelControlled * lbl = new TextLabelControlled(&money, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"cashmoney: ";
 	lbl->suffix = L" dollas";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&food, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"food: ";
 	lbl->suffix = L" foods";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"morale: ";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}{
 		TextLabelControlled * lbl = new TextLabelControlled(&moraleGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"moraleGen: ";
 	lbl->suffix = L"/tick";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&foodGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"foodGen: ";
 	lbl->suffix = L"/tick";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}{
 	TextLabelControlled * lbl = new TextLabelControlled(&moneyGen, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"moneyGen: ";
 	lbl->suffix = L"/tick";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	}
 	{TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"Population: ";
 	lbl->suffix = L" tenants";
-	vl->addChild(lbl);
+	uiPanel->addChild(lbl);
 	}
 	{TextLabelControlled * lbl = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
 	lbl->prefix = L"Capacity: ";
 	lbl->suffix = L" tenants";
-	vl->addChild(lbl);
-	}
+	uiPanel->addChild(lbl);
+	}*/
 	
 	lblMsg = new TextLabel(uiLayer->world, font, textShader);
 	lblMsg->setText("message area");
-	vl->addChild(lblMsg);
+	uiPanel->addChild(lblMsg);
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
 		caravanTimer -= 1;
@@ -391,7 +402,7 @@ void MY_Scene_Main::update(Step * _step){
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
-	float ar = (float)sd.y / (sd.x*(1.f - UI_RATIO));
+	float ar = (float)sd.y / (sd.x - UI_PANEL_WIDTH);
 	gameCam->resize(gameCam->left, gameCam->right, gameCam->getWidth()*ar * -0.5f, gameCam->getWidth()*ar * 0.5f);
 	
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
@@ -537,7 +548,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
-	_renderOptions->setViewPort(glm::floor(screenFBO->width*UI_RATIO),0,glm::ceil(screenFBO->width*(1.f - UI_RATIO)), screenFBO->height);
+	_renderOptions->setViewPort(UI_PANEL_WIDTH,0,screenFBO->width - UI_PANEL_WIDTH, screenFBO->height);
 	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
@@ -565,7 +576,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 	// calculate in-game isometric cursor position
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
-	glm::vec3 start = gameCam->screenToWorld(glm::vec3((mouse->mouseX()-sd.x*UI_RATIO)/(sd.x*(1.f - UI_RATIO)), mouse->mouseY()/sd.y, gameCam->nearClip), sd);
+	glm::vec3 start = gameCam->screenToWorld(glm::vec3((mouse->mouseX()-UI_PANEL_WIDTH)/(sd.x - UI_PANEL_WIDTH), mouse->mouseY()/sd.y, gameCam->nearClip), sd);
 	glm::vec3 dir = gameCam->forwardVectorRotated;
 	glm::vec3 norm(0,1,0);
 	glm::vec3 cursorPos(0);

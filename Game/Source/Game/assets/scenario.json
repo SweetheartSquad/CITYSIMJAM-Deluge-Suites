@@ -79,6 +79,11 @@
       "id":"btn-balloon",
       "src":"btn/balloon.png"
     },
+    {
+      "type":"texture",
+      "id":"uiPanel",
+      "src":"uiPanel.png"
+    },
 
 
 
