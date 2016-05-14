@@ -88,7 +88,7 @@
       "type":"building",
       "id": "empty",
       "meshes": ["empty2","empty3","empty4"],
-      "textures": ["ROOM_1"],
+      "textures": ["empty"],
       "support": false,
       "capacity": 0,
       "cost": -10,

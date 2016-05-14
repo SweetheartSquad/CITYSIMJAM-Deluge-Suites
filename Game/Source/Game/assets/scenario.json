@@ -167,6 +167,16 @@
     },
     {
       "type": "texture",
+      "id": "wall",
+      "src": "wall.png"
+    },
+    {
+      "type": "texture",
+      "id": "foundation",
+      "src": "foundation.png"
+    },
+    {
+      "type": "texture",
       "id": "red",
       "src": "red.png"
     }
