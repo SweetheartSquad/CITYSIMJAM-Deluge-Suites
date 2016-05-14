@@ -6,6 +6,7 @@
 class RenderSurface;
 class StandardFrameBuffer;
 class TextArea;
+class NodeUI;
 
 #define UI_PANEL_WIDTH 256
 #define UI_PANEL_HEIGHT 512
@@ -19,9 +20,6 @@ public:
 	Shader * screenSurfaceShader;
 	RenderSurface * screenSurface;
 	StandardFrameBuffer * screenFBO;
-	
-	ComponentShaderText * redTextShader;
-	ComponentShaderText * greenTextShader;
 
 	OrthographicCamera * gameCam;
 
@@ -38,9 +36,11 @@ public:
 	int floodedFloors;
 	int angle;
 	float currentAngle;
+	glm::vec3 bgColour;
 	
 	MeshEntity * selectorThing;
 	TextArea * lblMsg;
+	NodeUI * arrowMoney, * arrowFood, * arrowMorale;
 
 	// handles generated resources, water level rising, etc.
 	Timeout * gameplayTick;
@@ -99,6 +99,7 @@ public:
 	// returns the cell at floors(_position.y)->cells[_position.x][_position.z]
 	Cell * getCell(glm::ivec3 _position);
 
+	void updateStats();
 
 	void addTenant();
 	void removeTenant();

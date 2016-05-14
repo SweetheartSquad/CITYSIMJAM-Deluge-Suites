@@ -98,6 +98,15 @@
       "id":"uiPanel",
       "src":"uiPanel.png"
     },
+    {
+      "type":"texture",
+      "id":"arrow-up",
+      "src":"arrow-up.png"
+    },{
+      "type":"texture",
+      "id":"arrow-down",
+      "src":"arrow-down.png"
+    },
 
 
 

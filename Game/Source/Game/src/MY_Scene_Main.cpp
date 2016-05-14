@@ -50,12 +50,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	if(!reader.parse(sweet::FileUtils::readFile("assets/stats.json"), stats, false)){
 		Log::error("JSON Parsing failed.");
 	}
-
-	
-	redTextShader = new ComponentShaderText(true);
-	greenTextShader = new ComponentShaderText(true);
-	redTextShader->textComponent->setColor(glm::vec4(1.0f, 0.5f, 0.5f, 1.f));
-	greenTextShader->textComponent->setColor(glm::vec4(0.5f, 1.0f, 0.5f, 1.f));
 	
 	// memory management
 	screenSurface->incrementReferenceCount();
@@ -128,6 +122,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	buildDescription->boxSizing = kBORDER_BOX;
 	buildDescription->setHeight(77*2);
 	buildDescription->setMargin(4,0);
+	buildDescription->setMarginBottom(28);
 	buildDescription->setWrapMode(kWORD);
 	buildDescription->setRenderMode(kTEXTURE);
 	buildDescription->verticalAlignment = kTOP;
@@ -188,45 +183,81 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	float hoffset = 160.f;
 	{
+	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
+	uiPanel->addChild(hl);
+	hl->setMarginLeft(hoffset);
+	hl->setHeight(10);
+	hl->boxSizing = kCONTENT_BOX;
+	arrowMoney = new NodeUI(uiLayer->world);
+	hl->addChild(arrowMoney);
+	arrowMoney->setHeight(10);
+	arrowMoney->setWidth(10);
+	arrowMoney->setMarginLeft(2);
+	arrowMoney->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
 	TextLabelControlled * lbl = new TextLabelControlled(&money, -FLT_MAX, FLT_MAX, uiLayer->world, font, textShader);
-	uiPanel->addChild(lbl);
-	lbl->boxSizing = kCONTENT_BOX;
-	lbl->setMarginTop(28);
-	lbl->setMarginLeft(hoffset);
+	hl->addChild(lbl);
 	lbl->setHeight(10);
 	lbl->decimals = 0;
 	lbl->setRenderMode(kTEXTURE);
-	lbl->setMouseEnabled(true);
 	}{
+	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
+	uiPanel->addChild(hl);
+	hl->boxSizing = kCONTENT_BOX;
+	hl->setMarginTop(2);
+	hl->setMarginLeft(hoffset);
+	hl->setHeight(10);
 	TextLabelControlled * lbl = new TextLabelControlled(&tenants, 0, FLT_MAX, uiLayer->world, font, textShader);
-	uiPanel->addChild(lbl);
-	lbl->boxSizing = kCONTENT_BOX;
-	lbl->setMarginTop(2);
-	lbl->setMarginLeft(hoffset);
-	lbl->setHeight(10);
+	hl->addChild(lbl);
 	lbl->setRenderMode(kTEXTURE);
 	lbl->decimals = 0;
-	lbl->setMouseEnabled(true);
+	lbl->setHeight(10);
+	lbl->setWidth(32);
+	TextLabelControlled * lbl2 = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
+	hl->addChild(lbl2);
+	lbl2->setRenderMode(kTEXTURE);
+	lbl2->decimals = 0;
+	lbl2->prefix = L"/";
+	lbl2->setHeight(10);
+	lbl2->setWidth(50);
 	}{
+	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
+	uiPanel->addChild(hl);
+	hl->setMarginLeft(hoffset);
+	hl->setHeight(10);
+	hl->setMarginTop(2);
+	hl->boxSizing = kCONTENT_BOX;
+	arrowMorale = new NodeUI(uiLayer->world);
+	hl->addChild(arrowMorale);
+	arrowMorale->setHeight(10);
+	arrowMorale->setWidth(10);
+	arrowMorale->setMarginLeft(2);
+	arrowMorale->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
 	TextLabelControlled * lbl = new TextLabelControlled(&morale, 0, 100, uiLayer->world, font, textShader);
-	uiPanel->addChild(lbl);
-	lbl->boxSizing = kCONTENT_BOX;
-	lbl->setMarginTop(2);
-	lbl->setMarginLeft(hoffset);
+	hl->addChild(lbl);
 	lbl->setHeight(10);
-	lbl->setRenderMode(kTEXTURE);
 	lbl->decimals = 0;
+	lbl->suffix = L"/100";
+	lbl->setRenderMode(kTEXTURE);
 	}{
+	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
+	uiPanel->addChild(hl);
+	hl->setMarginLeft(hoffset);
+	hl->setHeight(10);
+	hl->setMarginTop(2);
+	hl->boxSizing = kCONTENT_BOX;
+	arrowFood = new NodeUI(uiLayer->world);
+	hl->addChild(arrowFood);
+	arrowFood->setHeight(10);
+	arrowFood->setWidth(10);
+	arrowFood->setMarginLeft(2);
+	arrowFood->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
 	TextLabelControlled * lbl = new TextLabelControlled(&food, 0, FLT_MAX, uiLayer->world, font, textShader);
-	uiPanel->addChild(lbl);
-	lbl->boxSizing = kCONTENT_BOX;
-	lbl->setMarginTop(2);
-	lbl->setMarginLeft(hoffset);
+	hl->addChild(lbl);
 	lbl->setHeight(10);
-	lbl->setRenderMode(kTEXTURE);
 	lbl->decimals = 0;
+	lbl->setRenderMode(kTEXTURE);
 	}{
-	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, redTextShader);
+	TextLabelControlled * lbl = new TextLabelControlled(&weight, 0, FLT_MAX, uiLayer->world, font, textShader);
 	uiPanel->addChild(lbl);
 	lbl->boxSizing = kCONTENT_BOX;
 	lbl->prefix = L"-";
@@ -248,7 +279,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lblMsg->setRenderMode(kTEXTURE);
 	lblMsg->verticalAlignment = kTOP;
 	lblMsg->setText("Lorem ipsem dolor sit amet. Blah blhhadi wajd woadjw iadjowa jdwad jwaodjwaiodj awidoj awodj waij");
-	lblMsg->setMouseEnabled(true);
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
 		caravanTimer -= 1;
@@ -281,6 +311,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 			oldWaterLevel += 1;
 			floodFloor();
 		}
+
+		updateStats();
 
 		gameplayTick->restart();
 	});
@@ -329,6 +361,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 
 	// setup starting stats
+	bgColour = glm::vec3(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"));
+
 	money = getStat("startingResources.money");
 	morale = getStat("startingResources.morale");
 	food = getStat("startingResources.food");
@@ -369,7 +403,6 @@ MY_Scene_Main::~MY_Scene_Main(){
 	screenFBO->decrementAndDelete();
 }
 
-
 void MY_Scene_Main::update(Step * _step){
 	// Screen shader update
 	// Screen shaders are typically loaded from a file instead of built using components, so to update their uniforms
@@ -381,6 +414,8 @@ void MY_Scene_Main::update(Step * _step){
 		glUniform1f(test, _step->time);
 		checkForGlError(0);
 	}
+
+	
 	
 	if(keyboard->keyJustDown(GLFW_KEY_L)){
 		screenSurfaceShader->unload();
@@ -521,6 +556,30 @@ void MY_Scene_Main::resume(){
 	selectorThing->setVisible(true);
 }
 
+void MY_Scene_Main::updateStats(){
+	if(moraleGen < -0.5){
+		arrowMorale->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-down")->texture);
+	}else if(moraleGen > 0.5){
+		arrowMorale->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
+	}else{
+		arrowMorale->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("transparent")->texture);
+	}
+	if(moneyGen < -0.5){
+		arrowMoney->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-down")->texture);
+	}else if(moneyGen > 0.5){
+		arrowMoney->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
+	}else{
+		arrowMoney->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("transparent")->texture);
+	}
+	if(foodGen < -0.5){
+		arrowFood->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-down")->texture);
+	}else if(foodGen > 0.5){
+		arrowFood->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("arrow-up")->texture);
+	}else{
+		arrowFood->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("transparent")->texture);
+	}
+}
+
 void MY_Scene_Main::setFloor(unsigned long int _floor){
 	currentFloor = _floor;
 	
@@ -545,7 +604,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 
 	// render the scene
 	_renderOptions->setViewPort(UI_PANEL_WIDTH,0,screenFBO->width - UI_PANEL_WIDTH, screenFBO->height);
-	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
+	_renderOptions->setClearColour(bgColour.r, bgColour.g, bgColour.b,1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
 	// unbind our screen framebuffer, rebinding the previously bound framebuffer
@@ -656,6 +715,8 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	if(_position.y == floors.size()-1 && _buildingType == "stairs"){
 		placeFloor();
 	}
+
+	updateStats();
 }
 
 void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
@@ -675,6 +736,7 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 		delete cell->building->firstParent();
 		cell->building = nullptr;
 	}
+	updateStats();
 }
 
 void MY_Scene_Main::placeFloor(){
