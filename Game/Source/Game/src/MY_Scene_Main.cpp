@@ -59,7 +59,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	screenFBO->incrementReferenceCount();
 
 	// camera
-	gameCam = new OrthographicCamera(-glm::max(GRID_SIZE_X,GRID_SIZE_Z),glm::max(GRID_SIZE_X,GRID_SIZE_Z), -glm::max(GRID_SIZE_X,GRID_SIZE_Z),glm::max(GRID_SIZE_X,GRID_SIZE_Z), -100,100);
+	int gmax = glm::max(GRID_SIZE_X,GRID_SIZE_Z);
+	gameCam = new OrthographicCamera(-gmax,gmax, -gmax, gmax, -100,100);
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
 	activeCamera = gameCam;
@@ -67,8 +68,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	gameCam->yaw = 45;
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
-
-	gameCam->update(&sweet::step);
 
 
 	// water
@@ -92,6 +91,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
 	foundation->freezeTransformation();
 	foundationOffset = foundation->mesh->calcBoundingBox().height;
+	gameCam->firstParent()->translate(0, foundationOffset, 0);
 
 	boat = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("boat")->meshes.at(0), baseShader);
 	boat->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("boat")->texture);
@@ -338,7 +338,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		v.alpha = 0.25f;
 	}
 	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
+	
 
+	update(&sweet::step);
+	pause();
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -365,15 +368,20 @@ void MY_Scene_Main::update(Step * _step){
 		glUniform1f(test, _step->time);
 		checkForGlError(0);
 	}
-
+	
 	if(keyboard->keyJustDown(GLFW_KEY_L)){
 		screenSurfaceShader->unload();
 		screenSurfaceShader->loadFromFile(screenSurfaceShader->vertSource, screenSurfaceShader->fragSource);
 		screenSurfaceShader->load();
 	}
 
-	// move water visual upwards to match actual water level
-	waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.4f) - waterPlane->firstParent()->getTranslationVector().y),0);
+	if(keyboard->keyJustDown(GLFW_KEY_P)){
+		if(gameplayTick->active){
+			pause();
+		}else{
+			resume();
+		}
+	}
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
@@ -384,31 +392,7 @@ void MY_Scene_Main::update(Step * _step){
 	glm::ivec3 cursorPos = getIsometricCursorPos();
 	
 	selectorThing->firstParent()->translate(glm::vec3(cursorPos.x - GRID_SIZE_X/2.f, 0, cursorPos.z - GRID_SIZE_Z/2.f), false);
-
-	if(mouse->leftJustPressed()){
-
-		// make sure the cursor is within bounds
-		if(cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X &&
-			cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z){
-			
-			Cell * cell = getCell(cursorPos);
-
-			std::stringstream ss;
-			ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z << std::endl;
-			ss << "cell type is " << cell->building->definition->id << ", user type is " << currentType;
-			Log::info(ss.str());
-
-			if(cell->building->definition->id != currentType && cell->building->definition->id != "blocked"){
-				if(cell->building->definition->id == "empty" || currentType == "empty"){
-					placeBuilding(currentType, cursorPos, false);
-				}else{
-					alert("You can't place a building here.");
-				}
-			}else{
-				alert("You can't place a building here.");
-			}
-		}
-	}
+	
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
 		floors.at(i)->updateVisibility(currentFloor + floodedFloors, angle);
@@ -420,9 +404,6 @@ void MY_Scene_Main::update(Step * _step){
 	currentAngle += angleDif * 0.1f;
 	gameCam->yaw = currentAngle;
 	gameCam->firstParent()->translate(camPos, false);
-
-	// Scene update
-	MY_Scene_Base::update(_step);
 
 	// player input
 	
@@ -455,6 +436,56 @@ void MY_Scene_Main::update(Step * _step){
 	if(floorChange != 0){
 		setFloor(currentFloor + glm::sign(floorChange));
 	}
+
+
+
+	
+		
+	// non-paused interaction
+	if(gameplayTick->active){
+		// move water visual upwards to match actual water level
+		waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.4f) - waterPlane->firstParent()->getTranslationVector().y),0);
+
+		if(mouse->leftJustPressed()){
+
+			// make sure the cursor is within bounds
+			if(cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X &&
+				cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z){
+			
+				Cell * cell = getCell(cursorPos);
+
+				std::stringstream ss;
+				ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z << std::endl;
+				ss << "cell type is " << cell->building->definition->id << ", user type is " << currentType;
+				Log::info(ss.str());
+
+				if(cell->building->definition->id != currentType && cell->building->definition->id != "blocked"){
+					if(cell->building->definition->id == "empty" || currentType == "empty"){
+						placeBuilding(currentType, cursorPos, false);
+					}else{
+						alert("You can't place a building here.");
+					}
+				}else{
+					alert("You can't place a building here.");
+				}
+			}
+		}
+	}
+
+
+
+	// Scene update
+	MY_Scene_Base::update(_step);
+}
+
+void MY_Scene_Main::pause(){
+	gameplayTick->pause();
+
+	selectorThing->setVisible(false);
+}
+void MY_Scene_Main::resume(){
+	gameplayTick->start();
+	selectorThing->setVisible(true);
 }
 
 void MY_Scene_Main::setFloor(unsigned long int _floor){

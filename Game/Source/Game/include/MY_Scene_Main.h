@@ -24,6 +24,11 @@ public:
 	Transform * buildingRoot;
 	std::string currentType;
 
+	// pause gameplay
+	void pause();
+	// resume gameplay
+	void resume();
+
 	// the floor which the player is looking at
 	int currentFloor;
 	int floodedFloors;
