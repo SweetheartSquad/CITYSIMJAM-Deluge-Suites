@@ -398,7 +398,7 @@ void MY_Scene_Main::update(Step * _step){
 			ss << "cell type is " << cell->building->definition->id << ", user type is " << currentType;
 			Log::info(ss.str());
 
-			if(cell->building->definition->id != currentType){
+			if(cell->building->definition->id != currentType && cell->building->definition->id != "blocked"){
 				if(cell->building->definition->id == "empty" || currentType == "empty"){
 					placeBuilding(currentType, cursorPos, false);
 				}else{

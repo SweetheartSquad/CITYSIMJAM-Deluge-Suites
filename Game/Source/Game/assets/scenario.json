@@ -120,6 +120,11 @@
       "id": "empty4",
       "src": "rooms/empty4.obj"
     },
+    {
+      "type": "mesh",
+      "id": "blocked",
+      "src": "rooms/blocked.obj"
+    },
 
 
     {
@@ -151,6 +156,11 @@
       "type": "texture",
       "id": "stairs",
       "src": "stairs.png"
+    },
+    {
+      "type": "texture",
+      "id": "red",
+      "src": "red.png"
     }
 
   ]

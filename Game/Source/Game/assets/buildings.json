@@ -101,8 +101,8 @@
     },{
       "type":"building",
       "id": "blocked",
-      "meshes": ["empty1"],
-      "textures": ["empty"],
+      "meshes": ["blocked"],
+      "textures": ["red"],
       "support": false,
       "capacity": 0,
       "cost": 0,
