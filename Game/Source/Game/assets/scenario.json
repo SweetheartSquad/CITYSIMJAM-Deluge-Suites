@@ -105,6 +105,11 @@
   	},
     {
       "type": "mesh",
+      "id": "balloon",
+      "src": "balloon.obj"
+    },
+    {
+      "type": "mesh",
       "id": "wall",
       "src": "wall.obj"
     },
@@ -154,6 +159,11 @@
       "type": "texture",
       "id": "support",
       "src": "support.png"
+    },
+    {
+      "type": "texture",
+      "id": "balloon",
+      "src": "balloon.png"
     },
     {
       "type": "texture",
