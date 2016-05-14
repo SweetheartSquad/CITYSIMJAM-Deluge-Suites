@@ -101,6 +101,7 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 		scale(p, 1, p, false);
 	});
 	addChild(boing, false);
+	boing->start();
 }
 
 Floor::~Floor(){

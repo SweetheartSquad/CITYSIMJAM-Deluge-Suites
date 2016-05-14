@@ -176,7 +176,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	btn->setMouseEnabled(true);
 	btn->setText("Place Floor");
 	btn->eventManager->addEventListener("click", [this](sweet::Event * _event){
-		placeFloor(false);
+		placeFloor();
 	});
 	
 	{
@@ -329,8 +329,11 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	caravanTimer = getStat("caravans.delay");
 	for(unsigned long int i = 0; i < getStat("startingResources.tenants"); ++i){
 		addTenant();
-	}for(unsigned long int i = 0; i < getStat("startingResources.floors"); ++i){
-		placeFloor(true);
+	}
+	int numFloors = getStat("startingResources.floors");
+	placeFloor();
+	for(unsigned long int i = 1; i < numFloors; ++i){
+		placeBuilding("stairs", glm::ivec3(0,i-1,0), true);
 	}
 
 	
@@ -601,6 +604,11 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	if(!_free){
 		money -= b->definition->cost;
 	}
+
+	// if we're placing stairs on the top floor, add a new floor
+	if(_position.y == floors.size()-1 && _buildingType == "stairs"){
+		placeFloor();
+	}
 }
 
 void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
@@ -620,22 +628,8 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	}
 }
 
-void MY_Scene_Main::placeFloor(bool _free){
-	if(!_free){
-		// if the player can't afford it, let them know and return early
-		if(money - getStat("statChanges.floor.money") < 0){
-			alert("You can't afford a new floor.");
-			return;
-		}
-		
-	}else{
-		// if it's a free floor, add the cost of one now
-		// to offset the costs applied later
-		money + getStat("statChanges.floor.money");
-	}
-	changeStat("floor", true);
-
-	unsigned long int y = floors.size();
+void MY_Scene_Main::placeFloor(){
+	unsigned long int y = floors.size() + floodedFloors;
 	Floor * floor = new Floor(y, baseShader);
 	buildingRoot->addChild(floor, false);
 	floor->translate(0, y, 0);
@@ -643,12 +637,14 @@ void MY_Scene_Main::placeFloor(bool _free){
 	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
 		for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
 			if(floors.size() == 1 || floors.at(floors.size()-2)->cells[x][z]->building->definition->support){
-				placeBuilding("empty", glm::ivec3(x,y,z), true);
+				placeBuilding("empty", glm::ivec3(x,y-floodedFloors,z), true);
 			}else{
-				placeBuilding("blocked", glm::ivec3(x,y,z), true);
+				placeBuilding("blocked", glm::ivec3(x,y-floodedFloors,z), true);
 			}
 		}
 	}
+
+	floor->updateVisibility(currentFloor + floodedFloors, angle);
 }
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){

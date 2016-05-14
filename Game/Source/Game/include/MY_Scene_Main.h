@@ -88,7 +88,7 @@ public:
 	void removeBuilding(glm::ivec3 _position);
 
 	// adds a floor to the top of the building
-	void placeFloor(bool _free);
+	void placeFloor();
 	void setFloor(unsigned long int _floor);
 	void floodFloor();
 

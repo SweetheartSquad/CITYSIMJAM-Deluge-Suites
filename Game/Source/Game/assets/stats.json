@@ -16,15 +16,6 @@
 		"weight": 0.01 // water level += weight * this multiplier
 	},
 	"statChanges":{
-		"floor":{
-			"food":0,
-			"money":-100,
-			"morale":0,
-			"foodGen":0,
-			"moneyGen":0,
-			"moraleGen":0,
-			"weight":0
-		},
 		"tenant":{
 			"food":0,
 			"money":0,
