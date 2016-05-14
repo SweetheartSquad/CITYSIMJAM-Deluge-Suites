@@ -66,6 +66,14 @@
       "type":"texture",
       "id":"btn-empty",
       "src":"btn/x.png"
+    },{
+      "type":"texture",
+      "id":"btn-room",
+      "src":"btn/shelter.png"
+    },{
+      "type":"texture",
+      "id":"btn-supplies",
+      "src":"btn/supplies.png"
     },
 
 

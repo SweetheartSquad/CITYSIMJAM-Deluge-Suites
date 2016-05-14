@@ -129,8 +129,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	std::vector<std::string> btns;
 	btns.push_back("support");
+	btns.push_back("room");
 	btns.push_back("stairs");
 	btns.push_back("foodcourt");
+	btns.push_back("supplies");
 	btns.push_back("empty");
 	for(auto s : btns){
 		NodeUI * t = new NodeUI(uiLayer->world);
