@@ -87,10 +87,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	childTransform->addChild(waterPlane);
 
 	// building base
-	MeshEntity * ground = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("ground")->meshes.at(0), baseShader);
-	ground->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
-	childTransform->addChild(ground)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
-	ground->freezeTransformation();
 	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
 	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
 	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);

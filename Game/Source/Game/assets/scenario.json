@@ -23,6 +23,16 @@
       "id": "boat",
       "src": "boat.png"
     },
+    {
+      "type": "mesh",
+      "id": "foundation",
+      "src": "foundation.obj"
+    },
+    {
+      "type": "mesh",
+      "id": "cube",
+      "src": "cube.obj"
+    },
 
 
 
@@ -91,21 +101,6 @@
       "type": "mesh",
       "id": "empty4",
       "src": "rooms/empty4.obj"
-    },
-    {
-      "type": "mesh",
-      "id": "foundation",
-      "src": "foundation.obj"
-    },
-    {
-      "type": "mesh",
-      "id": "ground",
-      "src": "ground.obj"
-    },
-    {
-      "type": "mesh",
-      "id": "cube",
-      "src": "cube.obj"
     },
 
 
