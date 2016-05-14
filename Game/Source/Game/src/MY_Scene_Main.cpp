@@ -59,7 +59,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	screenFBO->incrementReferenceCount();
 
 	// camera
-	gameCam = new OrthographicCamera(-8,8, -4.5,4.5, -100,100);
+	gameCam = new OrthographicCamera(-glm::max(GRID_SIZE_X,GRID_SIZE_Z),glm::max(GRID_SIZE_X,GRID_SIZE_Z), -glm::max(GRID_SIZE_X,GRID_SIZE_Z),glm::max(GRID_SIZE_X,GRID_SIZE_Z), -100,100);
 	cameras.push_back(gameCam);
 	childTransform->addChild(gameCam);
 	activeCamera = gameCam;
@@ -333,7 +333,7 @@ void MY_Scene_Main::update(Step * _step){
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
-	float ar = (float)sd.y / sd.x;
+	float ar = (float)sd.y / (sd.x*2/3);
 	gameCam->bottom = gameCam->getWidth()*ar * -0.5f;
 	gameCam->top = gameCam->getWidth()*ar*0.5f;
 	
@@ -437,13 +437,15 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
+	_renderOptions->setViewPort(screenFBO->width/3,0,screenFBO->width*2/3, screenFBO->height);
 	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
 	// unbind our screen framebuffer, rebinding the previously bound framebuffer
 	// since we didn't have one bound before, this will be the default framebuffer (i.e. the one visible to the player)
 	FrameBufferInterface::popFbo();
-
+	
+	_renderOptions->setViewPort(0,0,screenFBO->width, screenFBO->height);
 	// render our screen framebuffer using the standard render surface
 	screenSurface->render(screenFBO->getTextureId());
 
@@ -463,7 +465,7 @@ glm::ivec3 MY_Scene_Main::getIsometricCursorPos(){
 	// calculate in-game isometric cursor position
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
-	glm::vec3 start = gameCam->screenToWorld(glm::vec3(mouse->mouseX()/sd.x, mouse->mouseY()/sd.y, gameCam->nearClip), sd);
+	glm::vec3 start = gameCam->screenToWorld(glm::vec3((mouse->mouseX()-sd.x/3)/(sd.x*2/3), mouse->mouseY()/sd.y, gameCam->nearClip), sd);
 	glm::vec3 dir = gameCam->forwardVectorRotated;
 	glm::vec3 norm(0,1,0);
 	glm::vec3 cursorPos(0);

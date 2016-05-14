@@ -93,7 +93,7 @@ void MY_Scene_Base::update(Step * _step){
 void MY_Scene_Base::render(sweet::MatrixStack * _matrixStack, RenderOptions * _renderOptions){
 	_renderOptions->clear();
 	Scene::render(_matrixStack, _renderOptions);
-	uiLayer->render(_matrixStack, _renderOptions);
+	//uiLayer->render(_matrixStack, _renderOptions);
 }
 
 void MY_Scene_Base::load(){
