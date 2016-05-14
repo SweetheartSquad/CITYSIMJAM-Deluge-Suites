@@ -27,6 +27,22 @@
 
 
     {
+      "type":"texture",
+      "id":"btn-normal",
+      "src":"btn-normal.png"
+    },{
+      "type":"texture",
+      "id":"btn-over",
+      "src":"btn-over.png"
+    },{
+      "type":"texture",
+      "id":"btn-down",
+      "src":"btn-down.png"
+    },
+
+
+
+    {
       "type": "mesh",
       "id": "ROOM_1",
       "src": "rooms/room1.obj"

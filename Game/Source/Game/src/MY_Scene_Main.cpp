@@ -108,8 +108,41 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	// ui stuff
 	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
+	vl->setRationalHeight(1.f, uiLayer);
+	vl->setRationalWidth(UI_RATIO, uiLayer);
+	vl->setBackgroundColour(1,1,1,1);
 	//vl->setRenderMode(kTEXTURE);
 	uiLayer->addChild(vl);
+
+	HorizontalLinearLayout * hl = new HorizontalLinearLayout(uiLayer->world);
+	vl->addChild(hl);
+	hl->setRationalWidth(1.f, vl);
+	
+	Texture * btnTexNormal = MY_ResourceManager::globalAssets->getTexture("btn-normal")->texture;
+	Texture * btnTexOver = MY_ResourceManager::globalAssets->getTexture("btn-over")->texture;
+	Texture * btnTexDown = MY_ResourceManager::globalAssets->getTexture("btn-down")->texture;
+	auto btnOnIn = [btnTexOver](sweet::Event * _event){
+		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexOver);
+	};auto btnOnDown = [btnTexDown](sweet::Event * _event){
+		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexDown);
+	};auto btnOnOutOrUp = [btnTexNormal](sweet::Event * _event){
+		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexNormal);
+	};
+	for(unsigned long int i = 0; i < 3; ++i){
+		NodeUI * t = new NodeUI(uiLayer->world);
+		hl->addChild(t);
+		t->setMouseEnabled(true);
+		t->setWidth(32);
+		t->setHeight(32);
+		t->setMargin(2);
+		
+		t->background->mesh->pushTexture2D(btnTexNormal);
+		t->eventManager->addEventListener("mousein", btnOnIn);
+		t->eventManager->addEventListener("mousedown", btnOnDown);
+		t->eventManager->addEventListener("mouseup", btnOnOutOrUp);
+		t->eventManager->addEventListener("mouseout", btnOnOutOrUp);
+	}
+	
 
 	for(auto b : MY_ResourceManager::buildings->assets.at("building")){
 		TextLabel * btn = new TextLabel(uiLayer->world, font, textShader);
