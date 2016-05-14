@@ -516,7 +516,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
-	_renderOptions->setViewPort(screenFBO->width*UI_RATIO,0,screenFBO->width*(1.f - UI_RATIO), screenFBO->height);
+	_renderOptions->setViewPort(glm::floor(screenFBO->width*UI_RATIO),0,glm::ceil(screenFBO->width*(1.f - UI_RATIO)), screenFBO->height);
 	_renderOptions->setClearColour(getStat("bg.r"),getStat("bg.g"),getStat("bg.b"),1);
 	MY_Scene_Base::render(_matrixStack, _renderOptions);
 
