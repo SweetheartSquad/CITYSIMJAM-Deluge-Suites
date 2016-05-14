@@ -276,7 +276,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		}
 
 		float oldWaterLevel = glm::floor(waterLevel);
-		waterLevel += weight * getStat("tickMultipliers.weight");
+		waterLevel += glm::max(0.f,weight) * getStat("tickMultipliers.weight");
 		while(waterLevel > oldWaterLevel + 0.99f){
 			oldWaterLevel += 1;
 			floodFloor();
