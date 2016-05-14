@@ -455,14 +455,23 @@ void MY_Scene_Main::update(Step * _step){
 			const AssetBuilding * ab = MY_ResourceManager::getBuilding(currentType);
 			// make sure the cursor is within bounds
 			cursorPos += glm::ivec3(1,0,1);
-			bool validSpot =
-					cursorPos.x >= 1 && cursorPos.x < GRID_SIZE_X+1 &&
-					cursorPos.z >= 1 && cursorPos.z < GRID_SIZE_Z+1;
-			if(ab->aerial){
+			bool validSpot;
+			if(ab->empty){
+				validSpot = 
+					cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X+2 &&
+					cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z+2;
+			}else if(ab->aerial){
 				// along edge, but not on a corner
 				bool xedge = cursorPos.x == 0 || cursorPos.x == GRID_SIZE_X+1;
 				bool zedge = cursorPos.z == 0 || cursorPos.z == GRID_SIZE_Z+1; 
-				validSpot &= (xedge ^ zedge);
+				validSpot =
+					(xedge ^ zedge) &&
+					cursorPos.x >= 0 && cursorPos.x < GRID_SIZE_X+2 &&
+					cursorPos.z >= 0 && cursorPos.z < GRID_SIZE_Z+2;
+			}else{
+				validSpot =
+					cursorPos.x >= 1 && cursorPos.x < GRID_SIZE_X+1 &&
+					cursorPos.z >= 1 && cursorPos.z < GRID_SIZE_Z+1;
 			}
 			if(validSpot){
 			
@@ -482,6 +491,8 @@ void MY_Scene_Main::update(Step * _step){
 				}else{
 					alert("You can't place a building here.");
 				}
+			}else{
+				alert("You can't place that building here.");
 			}
 		}
 	}
@@ -599,7 +610,24 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	Building * b = new Building(ab, baseShader);
 	floors.at(_position.y)->cellContainer->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f - 1, 0, _position.z - GRID_SIZE_Z/2.f - 1, false);
 	floors.at(_position.y)->cells[_position.x][_position.z]->building = b;
-		
+	
+	if(ab->aerial){
+		float angle = 0;
+		if(_position.x == 0){
+			angle = 0;
+		}else if(_position.x == GRID_SIZE_X+1){
+			angle = 180;
+			b->firstParent()->translate(1,0,1);
+		}else if(_position.z == 0){
+			angle = 90;
+			b->firstParent()->translate(0,0,1);
+		}else if(_position.z  == GRID_SIZE_Z+1){
+			angle = 270;
+			b->firstParent()->translate(1,0,0);
+		}
+		b->firstParent()->rotate(angle, 0,1,0, kOBJECT);
+	}
+
 	weight += ab->weight;
 	foodGen += ab->generates.food;
 	moraleGen += ab->generates.morale;
@@ -647,9 +675,10 @@ void MY_Scene_Main::placeFloor(){
 		for(unsigned long int z = 0; z < GRID_SIZE_Z+2; ++z){
 			bool xedge = x == 0 || x == GRID_SIZE_X+1;
 			bool zedge = z == 0 || z == GRID_SIZE_Z+1;
-			if(xedge || zedge){
-				placeBuilding("aerial empty", glm::ivec3(x,y-floodedFloors,z), true);
-			}else if(floors.size() == 1 || floors.at(floors.size()-2)->cells[x][z]->building->definition->support){
+			if(floors.size() == 1 || floors.at(floors.size()-2)->cells[x][z]->building->definition->support
+				||
+				(xedge || zedge)
+				){
 				placeBuilding("empty", glm::ivec3(x,y-floodedFloors,z), true);
 			}else{
 				placeBuilding("blocked", glm::ivec3(x,y-floodedFloors,z), true);
