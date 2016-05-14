@@ -17,7 +17,8 @@ AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 
 	Json::Value meshesJson = _json["meshes"];
 	for(auto m : meshesJson){
-		MeshInterface * mesh = MY_ResourceManager::globalAssets->getMesh(m.asString())->meshes.at(0);
+		TriMesh * mesh = new TriMesh(true);
+		mesh->insertVertices(*MY_ResourceManager::globalAssets->getMesh(m.asString())->meshes.at(0));
 		mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture(_json["textures"][0].asString())->texture);
 		meshes.push_back(mesh);
 	}
