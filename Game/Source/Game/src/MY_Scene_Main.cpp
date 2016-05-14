@@ -329,7 +329,7 @@ void MY_Scene_Main::update(Step * _step){
 	}
 
 	// move water visual upwards to match actual water level
-	waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.33f) - waterPlane->firstParent()->getTranslationVector().y),0);
+	waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.4f) - waterPlane->firstParent()->getTranslationVector().y),0);
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
