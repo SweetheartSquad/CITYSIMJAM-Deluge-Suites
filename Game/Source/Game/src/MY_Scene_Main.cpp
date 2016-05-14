@@ -91,7 +91,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	// building base
 	MeshEntity * foundation = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("foundation")->meshes.at(0), baseShader);
-	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("ROOM_1")->texture);
+	foundation->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("foundation")->texture);
 	childTransform->addChild(foundation)->scale(GRID_SIZE_X, 1, GRID_SIZE_Z);
 	foundation->freezeTransformation();
 	foundationOffset = foundation->mesh->calcBoundingBox().height;

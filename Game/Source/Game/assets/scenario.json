@@ -27,7 +27,21 @@
       "type": "mesh",
       "id": "foundation",
       "src": "foundation.obj"
+    },{
+      "type": "texture",
+      "id": "foundation",
+      "src": "foundation.png"
     },
+    {
+      "type": "mesh",
+      "id": "wall",
+      "src": "wall.obj"
+    },/*{
+      "type": "texture",
+      "id": "wall",
+      "src": "wall.png"
+    },*/
+
     {
       "type": "mesh",
       "id": "cube",
@@ -116,11 +130,6 @@
       "type": "mesh",
       "id": "balloon",
       "src": "rooms/balloon.obj"
-    },
-    {
-      "type": "mesh",
-      "id": "wall",
-      "src": "wall.obj"
     },
     {
       "type": "mesh",
