@@ -21,12 +21,16 @@ AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 		mesh->insertVertices(*MY_ResourceManager::globalAssets->getMesh(m.asString())->meshes.at(0));
 		mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture(_json["textures"][0].asString())->texture);
 		meshes.push_back(mesh);
+		mesh->incrementReferenceCount();
 	}
 }
 AssetBuilding * AssetBuilding::create(Json::Value _json, Scenario * const _scenario){
 	return new AssetBuilding(_json, _scenario);
 }
 AssetBuilding::~AssetBuilding(){
+	for(auto m : meshes){
+		m->decrementAndDelete();
+	}
 }
 
 void AssetBuilding::load(){
