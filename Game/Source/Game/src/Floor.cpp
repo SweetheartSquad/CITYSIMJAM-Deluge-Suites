@@ -78,8 +78,8 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 	MeshEntity * fp = new MeshEntity(floorPlane, _shader);
 	wallContainerOpaque->addChild(fp, false);
 	
-	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
-	for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
+	for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_Z+2; ++z){
 		cells[x][z] = new Cell();
 		cells[x][z]->building = nullptr;
 	}
@@ -105,8 +105,8 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 }
 
 Floor::~Floor(){
-	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
-	for(unsigned long int z = 0; z < GRID_SIZE_Z; ++z){
+	for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_Z+2; ++z){
 		delete cells[x][z];
 	}
 	}

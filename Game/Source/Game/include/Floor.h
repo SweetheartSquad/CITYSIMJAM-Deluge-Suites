@@ -27,7 +27,7 @@ public:
 	Timeout * boing;
 
 	// access is [x][z]
-	Cell * cells[GRID_SIZE_X][GRID_SIZE_Z];
+	Cell * cells[GRID_SIZE_X+2][GRID_SIZE_Z+2];
 	
 	Floor(unsigned long int _height, Shader * _shader);
 	~Floor();

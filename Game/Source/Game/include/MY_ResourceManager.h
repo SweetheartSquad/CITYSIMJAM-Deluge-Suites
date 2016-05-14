@@ -12,6 +12,10 @@ public:
 	std::vector<MeshInterface *> meshes;
 	// this building can support a building on the space above it
 	bool support;
+	// this building is a slot for other buildings to be built in
+	bool empty;
+	// this building will be placed outside along an edge
+	bool aerial;
 	// number of tenants that can live here
 	float capacity;
 	// money gained/lost when placed by player
