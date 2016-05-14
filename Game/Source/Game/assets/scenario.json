@@ -74,6 +74,10 @@
       "type":"texture",
       "id":"btn-supplies",
       "src":"btn/supplies.png"
+    },{
+      "type":"texture",
+      "id":"btn-aerial support",
+      "src":"btn/aerial support.png"
     },
 
 
