@@ -378,8 +378,7 @@ void MY_Scene_Main::update(Step * _step){
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	float ar = (float)sd.y / (sd.x*(1.f - UI_RATIO));
-	gameCam->bottom = gameCam->getWidth()*ar * -0.5f;
-	gameCam->top = gameCam->getWidth()*ar*0.5f;
+	gameCam->resize(gameCam->left, gameCam->right, gameCam->getWidth()*ar * -0.5f, gameCam->getWidth()*ar * 0.5f);
 	
 	glm::vec3 camPos = gameCam->firstParent()->getTranslationVector();
 	glm::ivec3 cursorPos = getIsometricCursorPos();
