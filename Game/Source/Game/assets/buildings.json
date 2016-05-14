@@ -103,7 +103,7 @@
       "type":"building",
       "id": "empty",
       "meshes": ["empty2","empty3","empty4"],
-      "textures": ["empty"],
+      "textures": ["ROOM_1"],
       "support": false,
       "empty": true,
       "aerial": true,
