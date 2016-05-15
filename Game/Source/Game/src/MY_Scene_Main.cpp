@@ -274,7 +274,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	uiPanel->addChild(lblMsg);
 	lblMsg->setWidth(UI_PANEL_WIDTH);
 	lblMsg->boxSizing = kBORDER_BOX;
-	lblMsg->setHeight(77*2);
+	lblMsg->setHeight(94*2);
 	lblMsg->setMargin(4,0);
 	lblMsg->setMarginTop(28);
 	lblMsg->setWrapMode(kWORD);
@@ -352,11 +352,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	});
 	childTransform->addChild(gameplayTick, false);
 	gameplayTick->start();
-
-	alertTimeout = new Timeout(2.5f, [this](sweet::Event * _event){
-		lblMsg->setText("");
-	});
-	childTransform->addChild(alertTimeout, false);
 
 
 
@@ -545,13 +540,13 @@ void MY_Scene_Main::update(Step * _step){
 					if(cell->building->definition->empty || ab->empty){
 						placeBuilding(currentType, cursorPos, false);
 					}else{
-						alert("You can't place a building here.");
+						alert(L"You can't place a building here.");
 					}
 				}else{
-					alert("You can't place a building here.");
+					alert(L"You can't place a building here.");
 				}
 			}else{
-				alert("You can't place that building here.");
+				alert(L"You can't place that building here.");
 			}
 		}
 	}
@@ -689,7 +684,7 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	
 	// if the player can't afford it, let them know and return early
 	if(!_free && money - MY_ResourceManager::getBuilding(_buildingType)->cost < 0){
-		alert("You can't afford this building.");
+		alert(L"You can't afford this building.");
 		return;
 	}
 	
@@ -823,9 +818,18 @@ void MY_Scene_Main::changeStat(std::string _statChange, bool _positive){
 
 }
 
-void MY_Scene_Main::alert(std::string _msg){
-	lblMsg->setText(_msg);
-	alertTimeout->restart();
+void MY_Scene_Main::alert(std::wstring _msg){
+	std::wstring t = _msg + L"\n" + lblMsg->getText();
+	lblMsg->setText(t);
+	while(lblMsg->usedLines.size() > 11){
+		int p = t.find_last_of(L'\n');
+		if(p != std::wstring::npos && p != 0 && p > t.size()-15){
+			t = t.substr(0,p);
+		}else{
+			t = t.substr(0,t.size()-15);
+		}
+		lblMsg->setText(t);
+	}
 }
 
 

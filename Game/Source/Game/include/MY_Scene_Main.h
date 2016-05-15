@@ -105,8 +105,7 @@ public:
 	void removeTenant();
 
 	// alerts the player with _msg
-	void alert(std::string _msg);
-	Timeout * alertTimeout;
+	void alert(std::wstring _msg);
 
 	void changeStat(std::string _statChange, bool _positive);
 };
