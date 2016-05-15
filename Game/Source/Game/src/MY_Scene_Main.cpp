@@ -712,17 +712,19 @@ void MY_Scene_Main::updateStats(){
 }
 
 void MY_Scene_Main::setFloor(unsigned long int _floor){
-	selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
-	currentFloor = _floor;
+	if(_floor < floors.size()){
+		selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
+		currentFloor = _floor;
 	
-	// update selector to the current floor
-	floors.at(currentFloor)->cellContainer->addChild(selectorThing->firstParent(), false);
+		// update selector to the current floor
+		floors.at(currentFloor)->cellContainer->addChild(selectorThing->firstParent(), false);
 		
-	// trigger animations
-	if(currentFloor != 0){
-		floors.at(currentFloor-1)->boing->restart();
+		// trigger animations
+		if(currentFloor != 0){
+			floors.at(currentFloor-1)->boing->restart();
+		}
+		floors.at(currentFloor)->boing->restart();
 	}
-	floors.at(currentFloor)->boing->restart();
 }
 
 
@@ -951,47 +953,49 @@ void MY_Scene_Main::alert(std::wstring _msg){
 
 
 void MY_Scene_Main::floodFloor(){
-	floodedFloors += 1;
+	if(floors.size() > 0){
+		floodedFloors += 1;
 
-	// lose functionality of all buildings on floor
-	// and a fraction of the weight
-	Floor * floor = floors.front();
-	for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
-	for(unsigned long int z = 0; z < GRID_SIZE_X+2; ++z){
-		const AssetBuilding * ab = floor->cells[x][z]->building->definition;
+		// lose functionality of all buildings on floor
+		// and a fraction of the weight
+		Floor * floor = floors.front();
+		for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
+		for(unsigned long int z = 0; z < GRID_SIZE_X+2; ++z){
+			const AssetBuilding * ab = floor->cells[x][z]->building->definition;
 		
-		weight -= ab->weight*getStat("floodedWeight");
-		foodGen -= ab->generates.food;
-		moraleGen -= ab->generates.morale;
-		moneyGen -= ab->generates.money;
-		capacity -= ab->capacity;
-	}
-	}
-
-	// if tenants are now higher than capacity, take a morale hit
-	morale -= glm::min(0.f, tenants - capacity);
-
-	// based on morale, possibly lose some tenants
-	for(unsigned long int i = 0; i < glm::ceil(tenants*0.75f); ++i){
-		if(sweet::NumberUtils::randomFloat() > morale/100.f){
-			removeTenant();
+			weight -= ab->weight*getStat("floodedWeight");
+			foodGen -= ab->generates.food;
+			moraleGen -= ab->generates.morale;
+			moneyGen -= ab->generates.money;
+			capacity -= ab->capacity;
 		}
-	}
+		}
 
-	floor->updateVisibility(floor->height+1);
-	floors.erase(floors.begin());
+		// if tenants are now higher than capacity, take a morale hit
+		morale -= glm::min(0.f, tenants - capacity);
+
+		// based on morale, possibly lose some tenants
+		for(unsigned long int i = 0; i < glm::ceil(tenants*0.75f); ++i){
+			if(sweet::NumberUtils::randomFloat() > morale/100.f){
+				removeTenant();
+			}
+		}
+
+		floor->updateVisibility(floor->height+1);
+		floors.erase(floors.begin());
 
 
-	// if this was your last floor, trigger gameover
-	if(floors.size() == 0){
-		// TODO: gameover
-		return;
-	}
+		// if this was your last floor, trigger gameover
+		if(floors.size() == 0){
+			// TODO: gameover
+			return;
+		}
 
-	if(currentFloor == 0){
-		setFloor(0);
-	}else{
-		setFloor(currentFloor-1);
+		if(currentFloor == 0){
+			setFloor(0);
+		}else{
+			setFloor(currentFloor-1);
+		}
 	}
 
 }
