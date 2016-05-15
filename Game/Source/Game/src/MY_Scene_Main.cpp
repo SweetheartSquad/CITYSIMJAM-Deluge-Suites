@@ -286,35 +286,78 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		caravanTimer -= 1;
 		if(caravanTimer == 0){
 			caravanTimer = getStat("caravans.delay");
-			int numTenants = sweet::NumberUtils::randomInt(1,getStat("caravans.delay"));
-			for(unsigned long int i = 0; i < numTenants && (capacity - tenants > 0.99f); ++i){
-				addTenant();
-			}
+			updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+				int numTenants = sweet::NumberUtils::randomInt(1,getStat("caravans.delay"));
+				for(unsigned long int i = 0; i < numTenants && (capacity - tenants > 0.99f); ++i){
+					addTenant();
+				}
+				alert(std::to_wstring(numTenants) + L" tenant" + (numTenants > 1 ? L"s" : L"") + L" arrived");
+			}));
 		}
 
-		money += moneyGen * getStat("tickMultipliers.money");
-		morale += moraleGen * getStat("tickMultipliers.morale");
-		food += foodGen * getStat("tickMultipliers.food");
+		if(glm::abs(moneyGen) > FLT_EPSILON){
+			updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+				float f = moneyGen * getStat("tickMultipliers.money");
+				money += f;
+				alert((f > FLT_EPSILON ? L"+" : L"") + std::to_wstring((int)f) + L" money");
+			}));
+		}
 
-		// if out of food, remainder is taken as a hit to morale and there's a chance to lose tenants
-		if(food < 0){
-			morale += food;
-			food = 0;
-			for(unsigned long int i = 0; i < glm::ceil(tenants*0.75f); ++i){
-				if(sweet::NumberUtils::randomFloat() > morale/100.f){
-					removeTenant();
+		if(glm::abs(moraleGen) > FLT_EPSILON){
+			updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+				float f = moraleGen * getStat("tickMultipliers.morale");
+				morale += f;
+				alert((f > FLT_EPSILON ? L"+" : L"") + std::to_wstring((int)f) + L" morale");
+			}));
+		}
+
+		if(glm::abs(foodGen) > FLT_EPSILON){
+			updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+				float f = foodGen * getStat("tickMultipliers.food");
+				food += f;
+				// if out of food, remainder is taken as a hit to morale and there's a chance to lose tenants
+				if(food < 0){
+					morale += food;
+					f = f + food;
+					food = 0;
+					alert(L"ran out of food!");
+					updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+						int numTenantsLeaving = glm::ceil(tenants*0.75f);
+						for(unsigned long int i = 0; i < numTenantsLeaving; ++i){
+							if(sweet::NumberUtils::randomFloat() > morale/100.f){
+								removeTenant();
+							}
+						}
+						alert(std::to_wstring(numTenantsLeaving) + L" tenant" + (numTenantsLeaving > 1 ? L"s" : L"") + L" departed");
+					}));
+				}else{
+					alert((f > FLT_EPSILON ? L"+" : L"") + std::to_wstring((int)f) + L" food");
+				}
+			}));
+		}
+
+		
+		
+		updates.push(new Timeout(UPDATE_SPACING, [this](sweet::Event * _event){
+			float oldWaterLevel = glm::floor(waterLevel);
+			waterLevel += glm::max(0.f,weight) * getStat("tickMultipliers.weight");
+			int oldNumTenants = tenants;
+			int oldFloodedFloors = floodedFloors;
+			while(waterLevel > oldWaterLevel + 0.99f){
+				oldWaterLevel += 1;
+				floodFloor();
+			}
+			if(floodedFloors - oldFloodedFloors > 0){
+				alert(std::to_wstring(floodedFloors - oldFloodedFloors) + L" floor" + (glm::abs(floodedFloors - oldFloodedFloors) > 1 ? L"s" : L"") + L" flooded!");
+				if(glm::abs(tenants - oldNumTenants) > FLT_EPSILON){
+					alert(std::to_wstring((int)glm::abs(tenants - oldNumTenants)) + L" tenant" + (glm::abs(tenants - oldNumTenants) > 1 ? L"s" : L"") + L" drowned");
 				}
 			}
-		}
-
-		float oldWaterLevel = glm::floor(waterLevel);
-		waterLevel += glm::max(0.f,weight) * getStat("tickMultipliers.weight");
-		while(waterLevel > oldWaterLevel + 0.99f){
-			oldWaterLevel += 1;
-			floodFloor();
-		}
-
-		updateStats();
+		}));
+		
+		updates.push(new Timeout(0.f, [this](sweet::Event * _event){
+			updateStats();
+		}));
 
 		gameplayTick->restart();
 	});
@@ -502,6 +545,18 @@ void MY_Scene_Main::update(Step * _step){
 		
 	// non-paused interaction
 	if(gameplayTick->active){
+		if(updates.size() > 0){
+			if(!updates.front()->active){
+				updates.front()->start();
+			}
+			updates.front()->update(_step);
+			if(updates.front()->complete){
+				updates.front()->update(_step);
+				delete updates.front();
+				updates.pop();
+			}
+		}
+
 		// move water visual upwards to match actual water level
 		waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.4f) - waterPlane->firstParent()->getTranslationVector().y),0);
 

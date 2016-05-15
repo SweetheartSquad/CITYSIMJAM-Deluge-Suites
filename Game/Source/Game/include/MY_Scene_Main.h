@@ -10,6 +10,7 @@ class NodeUI;
 
 #define UI_PANEL_WIDTH 256
 #define UI_PANEL_HEIGHT 512
+#define UPDATE_SPACING 0.25f
 
 // A sample scene showing some of the basics of integrating a Box2D physics simulation into a game scene
 class MY_Scene_Main : public MY_Scene_Base{
@@ -106,6 +107,7 @@ public:
 
 	// alerts the player with _msg
 	void alert(std::wstring _msg);
+	std::queue<Timeout *> updates;
 
 	void changeStat(std::string _statChange, bool _positive);
 };
