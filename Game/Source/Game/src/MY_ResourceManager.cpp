@@ -11,11 +11,27 @@ AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 	aerial(_json.get("aerial", false).asBool()),
 	capacity(_json.get("capacity", 0).asFloat()),
 	cost(_json.get("cost", 0).asFloat()),
-	weight(_json.get("weight", 0).asFloat())
+	weight(_json.get("weight", 0).asFloat()),
+	description(_json.get("description", "").asString())
 {
 	generates.food = _json["generates"].get("food", 0).asFloat();
 	generates.morale = _json["generates"].get("morale", 0).asFloat();
 	generates.money = _json["generates"].get("money", 0).asFloat();
+
+	std::stringstream ss;
+	ss << (cost > 0 ? "-" : "+") << glm::abs(cost) << " money" << std::endl << (weight > 0 ? "-" : "+") << glm::abs(weight) << " buoyancy" << std::endl;
+	if(capacity > 0){
+		ss << (capacity < 0 ? "-" : "+") << glm::abs(capacity) << " max tenants" << std::endl;
+	}
+	if(glm::abs(generates.food) > FLT_EPSILON){
+		ss << (generates.food < 0 ? "-" : "+") << glm::abs(generates.food) << " food/trip" << std::endl;
+	}if(glm::abs(generates.morale) > FLT_EPSILON){
+		ss << (generates.morale < 0 ? "-" : "+") << glm::abs(generates.morale) << " morale/trip" << std::endl;
+	}if(glm::abs(generates.money) > FLT_EPSILON){
+		ss << (generates.money < 0 ? "-" : "+") << glm::abs(generates.money) << " money/trip" << std::endl;
+	}
+	ss << std::endl << description;
+	description = ss.str();
 
 	Json::Value meshesJson = _json["meshes"];
 	for(auto m : meshesJson){

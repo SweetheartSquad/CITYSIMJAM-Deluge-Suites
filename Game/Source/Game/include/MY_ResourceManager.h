@@ -22,6 +22,8 @@ public:
 	float cost;
 	// affects difficulty
 	float weight;
+	// text for description section of UI
+	std::string description;
 	struct {
 		float food;
 		float money;

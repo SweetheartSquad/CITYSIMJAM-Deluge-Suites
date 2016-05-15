@@ -3,6 +3,7 @@
     {
       "type":"building",
       "id": "support",
+      "description": "A cheap support block.",
       "meshes": ["support"],
       "textures": ["support"],
       "support": true,
@@ -17,6 +18,7 @@
     },{
       "type":"building",
       "id": "stairs",
+      "description": "Place on top floor to open up a new floor.",
       "meshes": ["stairs"],
       "textures": ["stairs"],
       "support": true,
@@ -31,6 +33,7 @@
     },{
       "type":"building",
       "id": "room",
+      "description": "Provides living space for tenants.",
       "meshes": ["ROOM_1"],
       "textures": ["ROOM_1"],
       "support": true,
@@ -45,6 +48,7 @@
     },{
       "type":"building",
       "id": "foodcourt",
+      "description": "Provides food.",
       "meshes": ["FOOD_1"],
       "textures": ["FOOD_1"],
       "support": true,
@@ -59,6 +63,7 @@
     },{
       "type":"building",
       "id": "supplies",
+      "description": "Provides morale.",
       "meshes": ["SUPPLIES_1"],
       "textures": ["SUPPLIES_1"],
       "support": true,
@@ -73,6 +78,7 @@
     },{
       "type":"building",
       "id": "balloon",
+      "description": "Can only be placed on outer walls, but doesn't need support from below.",
       "meshes": ["balloon"],
       "textures": ["balloon"],
       "support": true,
@@ -88,6 +94,7 @@
     },{
       "type":"building",
       "id": "empty",
+      "description": "Destroys existing structures for a small return.",
       "meshes": ["empty1"],
       "textures": ["transparent"],
       "support": false,
@@ -104,6 +111,7 @@
     },{
       "type":"building",
       "id": "blocked",
+      "description": "You shouldn't be seeing this!",
       "meshes": ["blocked"],
       "textures": ["red"],
       "support": false,

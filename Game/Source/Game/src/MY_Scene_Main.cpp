@@ -138,8 +138,9 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexDown);
 	};auto btnOnOutOrUp = [btnTexNormal](sweet::Event * _event){
 		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexNormal);
-	};auto btnOnClick = [this](sweet::Event * _event){
+	};auto btnOnClick = [this, buildDescription](sweet::Event * _event){
 		setType(((NodeUI *)(_event->getIntData("target")))->nodeName);
+		buildDescription->setText(currentType + ":\n" + MY_ResourceManager::getBuilding(currentType)->description);
 	};
 
 	std::vector<std::string> btns;
