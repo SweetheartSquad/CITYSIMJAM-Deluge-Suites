@@ -127,6 +127,16 @@
       "id":"tutorial-3",
       "src":"tutorial-3.png"
     },
+    {
+      "type":"texture",
+      "id":"gameOver-1",
+      "src":"gameOver-1.png"
+    },
+    {
+      "type":"texture",
+      "id":"gameOver-2",
+      "src":"gameOver-2.png"
+    },
 
 
 

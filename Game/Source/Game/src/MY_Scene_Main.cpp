@@ -651,10 +651,31 @@ void MY_Scene_Main::gameOver(){
 	gameOverScreen->setRationalWidth(1.f, uiLayer);
 	uiLayer->addChild(gameOverScreen);
 
-	gameOverScreen->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("gameOver")->texture);
+	gameOverScreen->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("gameOver-1")->texture);
+
+	VerticalLinearLayout * vl = new VerticalLinearLayout(uiLayer->world);
+	uiLayer->addChild(vl);
+	vl->setRationalWidth(1.f, uiLayer);
+	vl->setRationalHeight(1.f, uiLayer);
+	vl->setMarginLeft(UI_PANEL_WIDTH);
+	vl->horizontalAlignment = kCENTER;
+	vl->verticalAlignment = kMIDDLE;
+
+	TextArea * ta = new TextArea(uiLayer->world, font, textShader);
+	vl->addChild(ta);
+	ta->setHeight(50);
+	ta->setWidth(200);
+
+	std::stringstream ss;
+	ss << "Floors built: " << floodedFloors + floors.size() << std::endl;
+	ss << "Floors flooded: " << floodedFloors << std::endl;
+	ss << "Trips survived: " << trips << std::endl;
+
+	ta->setText(ss.str());
 
 	Timeout * t = new Timeout(1.f, [this, gameOverScreen](sweet::Event * _event){
 		gameOverScreen->setMouseEnabled(true);
+		gameOverScreen->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("gameOver-2")->texture);
 		gameOverScreen->eventManager->addEventListener("click", [this](sweet::Event * _event){
 			std::stringstream ss;
 			ss << sweet::lastTimestamp;
