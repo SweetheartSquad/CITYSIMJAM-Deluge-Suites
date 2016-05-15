@@ -380,35 +380,37 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	});
 	gameplayTick->eventManager->addEventListener("progress", [this](sweet::Event * _event){
 		float p = _event->getFloatData("progress");
+		float p2 = 0;
 		float wait = 0.2f;
 		float away = 0.2f;
 		if(p < wait/2.f){
 			// second half of turn while docked
-			p = Easing::easeOutCubic(p, 0.5, -0.5, wait/2.f);
-			boat->childTransform->setOrientation(glm::angleAxis(180*p, glm::vec3(0,1,0)));
-			p = 1.f;
+			p2 = Easing::easeOutCubic(p, 0.5, -0.5, wait/2.f);
+			boat->childTransform->setOrientation(glm::angleAxis(180*p2, glm::vec3(0,1,0)));
+			p2 = 1.f;
 		}else if(p > 1.f-wait/2.f){
 			// first half of turn while docked
-			p = Easing::easeInCubic(p-(1.f-wait/2.f), 1, -0.5, wait/2.f);
-			boat->childTransform->setOrientation(glm::angleAxis(180*p, glm::vec3(0,1,0)));
-			p = 1.f;
+			p2 = Easing::easeInCubic(p-(1.f-wait/2.f), 1, -0.5, wait/2.f);
+			boat->childTransform->setOrientation(glm::angleAxis(180*p2, glm::vec3(0,1,0)));
+			p2 = 1.f;
 		}else if(p < 0.5-away/2.f){
 			// travelling away
-			p = Easing::easeInOutCubic(p-wait/2.f, 1, -1, 0.5f-wait/2.f-away/2.f);
+			p2 = Easing::easeInOutCubic(p-wait/2.f, 1, -1, 0.5f-wait/2.f-away/2.f);
 			boat->childTransform->setOrientation(glm::angleAxis(0.f, glm::vec3(0,1,0)));
 		}else if(p > 0.5+away/2.f){
 			// travelling towards
-			p = Easing::easeInOutCubic(p-0.5-away/2.f, 0, 1, 0.5f-wait/2.f-away/2.f);
+			p2 = Easing::easeInOutCubic(p-0.5-away/2.f, 0, 1, 0.5f-wait/2.f-away/2.f);
 			boat->childTransform->setOrientation(glm::angleAxis(180.f, glm::vec3(0,1,0)));
 		}else{
 			// waiting while away
 			// also turn around
-			p = Easing::easeInOutCubic(p-0.5f+away/2.f, 0, 1, away);
-			boat->childTransform->setOrientation(glm::angleAxis(180*p, glm::vec3(0,1,0)));
-			p = 0;
+			p2 = Easing::easeInOutCubic(p-0.5f+away/2.f, 0, 1, away);
+			boat->childTransform->setOrientation(glm::angleAxis(180*p2, glm::vec3(0,1,0)));
+			p2 = 0;
 		}
-		
-		boat->firstParent()->translate(0.5, waterPlane->firstParent()->getTranslationVector().y, GRID_SIZE_Z*3 + (GRID_SIZE_Z*0.5f - GRID_SIZE_Z*3)*p, false);
+		if(trips != 0 || p > 0.5f+away/2.f){
+			boat->firstParent()->translate(0.5, waterPlane->firstParent()->getTranslationVector().y, GRID_SIZE_Z*3 + (GRID_SIZE_Z*0.5f - GRID_SIZE_Z*3)*p2, false);
+		}
 	});
 	childTransform->addChild(gameplayTick, false);
 	gameplayTick->start();
