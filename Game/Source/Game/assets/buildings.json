@@ -68,11 +68,11 @@
       "textures": ["SUPPLIES_1"],
       "support": true,
       "capacity": 0,
-      "cost": 100,
+      "cost": 75,
       "weight": 30,
       "generates":{
         "food":0,
-        "morale":10,
+        "morale":3,
         "money":0
       }
     },{
@@ -88,7 +88,7 @@
       "weight": -5,
       "generates":{
         "food":0,
-        "morale":5,
+        "morale":1,
         "money":0
       }
     },{
