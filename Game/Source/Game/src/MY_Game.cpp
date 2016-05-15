@@ -11,7 +11,7 @@
 MY_Game::MY_Game() :
 	Game("menu", new MY_Scene_Main(this), true) // initialize our game with a menu scene
 {
-	sweet::setCursorMode(GLFW_CURSOR_NORMAL);
+	sweet::setCursorMode(GLFW_CURSOR_HIDDEN);
 }
 
 MY_Game::~MY_Game(){}

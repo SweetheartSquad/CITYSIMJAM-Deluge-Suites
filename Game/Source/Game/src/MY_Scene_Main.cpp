@@ -16,6 +16,7 @@
 #include <RenderOptions.h>
 #include <StringUtils.h>
 #include <Easing.h>
+#include <Sprite.h>
 
 #include <shader\ShaderComponentTexture.h>
 #include <shader\ShaderComponentDiffuse.h>
@@ -388,9 +389,6 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
 	
 
-	update(&sweet::step);
-	pause();
-
 
 	NodeUI * tutorial = new NodeUI(uiLayer->world);
 	uiLayer->addChild(tutorial);
@@ -402,6 +400,11 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 		tutorial->setVisible(false);
 		resume();
 	});
+
+	uiLayer->addMouseIndicator();
+
+	update(&sweet::step);
+	pause();
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
@@ -557,6 +560,11 @@ void MY_Scene_Main::update(Step * _step){
 
 	// Scene update
 	MY_Scene_Base::update(_step);
+
+	glm::vec3 mpos = uiLayer->mouseIndicator->firstParent()->getTranslationVector();
+	mpos.x -= glm::mod(mpos.x, 2.f);
+	mpos.z -= glm::mod(mpos.z, 2.f);
+	uiLayer->mouseIndicator->firstParent()->translate(mpos, false);
 }
 
 void MY_Scene_Main::pause(){
