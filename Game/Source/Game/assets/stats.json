@@ -22,7 +22,7 @@
 			"morale":0,
 			"foodGen":-5,
 			"moneyGen":5,
-			"moraleGen":-10,
+			"moraleGen":-5,
 			"weight":0
 		}
 	},
