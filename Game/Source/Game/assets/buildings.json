@@ -72,7 +72,7 @@
       "weight": 30,
       "generates":{
         "food":0,
-        "morale":3,
+        "morale":10,
         "money":0
       }
     },{
