@@ -33,17 +33,17 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	screenSurfaceShader(new Shader("assets/RenderSurface_1", false, true)),
 	screenSurface(new RenderSurface(screenSurfaceShader, true)),
 	screenFBO(new StandardFrameBuffer(true)),
-	money(1000.f),
-	morale(100),
-	food(100),
+	money(0),
+	morale(0),
+	food(0),
 	foodGen(0),
-	moraleGen(-10),
+	moraleGen(0),
 	moneyGen(0),
 	weight(0),
-	capacity(10),
+	capacity(0),
 	tenants(0),
 	waterLevel(0),
-	caravanTimer(3),
+	caravanTimer(1),
 	floodedFloors(0),
 	trips(0)
 {
@@ -419,6 +419,9 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	for(unsigned long int i = 1; i < numFloors; ++i){
 		placeBuilding("stairs", glm::ivec3(1,i-1,1), true);
 	}
+	placeBuilding("room", glm::ivec3(2,0,2), true);
+	placeBuilding("supplies", glm::ivec3(2,0,1), true);
+	placeBuilding("foodcourt", glm::ivec3(1,0,2), true);
 
 	
 	// add the selector thing (this needs to be done after floors are made)
