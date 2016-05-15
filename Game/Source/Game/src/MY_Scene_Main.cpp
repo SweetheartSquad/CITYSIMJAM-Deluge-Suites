@@ -541,7 +541,7 @@ void MY_Scene_Main::update(Step * _step){
 	// player input
 	
 	// rotate view
-	if(keyboard->keyJustDown(GLFW_KEY_LEFT) || keyboard->keyJustDown(GLFW_KEY_A)){
+	if(keyboard->keyJustDown(GLFW_KEY_LEFT) || keyboard->keyJustDown(GLFW_KEY_A) || mouse->rightJustPressed()){
 		angle -= 1;
 		MY_ResourceManager::globalAssets->getAudio("turn")->sound->setPitch(pow(2,sweet::NumberUtils::randomInt(1,13)/13.f));
 		MY_ResourceManager::globalAssets->getAudio("turn")->sound->play();
