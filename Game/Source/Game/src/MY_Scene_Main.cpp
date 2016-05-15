@@ -436,14 +436,15 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	tutorial->setRationalHeight(1.f, uiLayer);
 	tutorial->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("tutorial-1")->texture);
 	tutorial->setMouseEnabled(true);
-	static int t = 1;
-	tutorial->eventManager->addEventListener("click", [this, tutorial](sweet::Event * _event){
-		tutorial->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("tutorial-"+std::to_string(++t))->texture);
-		if(t == 4){
+	int * t = new int(1);
+	tutorial->eventManager->addEventListener("click", [this, tutorial, t](sweet::Event * _event){
+		tutorial->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("tutorial-"+std::to_string(++*t))->texture);
+		if(*t == 4){
 			tutorial->setVisible(false);
 			tutorial->setMouseEnabled(false);
 			tutorial->active = false;
 			resume();
+			delete t;
 		}
 	});
 
@@ -651,6 +652,18 @@ void MY_Scene_Main::gameOver(){
 	uiLayer->addChild(gameOverScreen);
 
 	gameOverScreen->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("gameOver")->texture);
+
+	Timeout * t = new Timeout(1.f, [this, gameOverScreen](sweet::Event * _event){
+		gameOverScreen->setMouseEnabled(true);
+		gameOverScreen->eventManager->addEventListener("click", [this](sweet::Event * _event){
+			std::stringstream ss;
+			ss << sweet::lastTimestamp;
+			game->scenes[ss.str()] = new MY_Scene_Main(game);
+			game->switchScene(ss.str(), true);
+		});
+	});
+	childTransform->addChild(t, false);
+	t->start();
 }
 
 void MY_Scene_Main::updateStats(){
