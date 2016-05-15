@@ -612,6 +612,12 @@ void MY_Scene_Main::update(Step * _step){
 				alert(L"You can't place that building here.");
 			}
 		}
+
+		// game over check
+		if(tenants == 0 || floors.size() == 0){
+			pause();
+			gameOver();
+		}
 	}
 
 
@@ -636,6 +642,15 @@ void MY_Scene_Main::pause(){
 void MY_Scene_Main::resume(){
 	gameplayTick->start();
 	selectorThing->setVisible(true);
+}
+
+void MY_Scene_Main::gameOver(){
+	NodeUI * gameOverScreen = new NodeUI(uiLayer->world);
+	gameOverScreen->setRationalHeight(1.f, uiLayer);
+	gameOverScreen->setRationalWidth(1.f, uiLayer);
+	uiLayer->addChild(gameOverScreen);
+
+	gameOverScreen->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("gameOver")->texture);
 }
 
 void MY_Scene_Main::updateStats(){

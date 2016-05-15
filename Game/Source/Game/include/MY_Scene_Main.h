@@ -112,4 +112,7 @@ public:
 	std::queue<Timeout *> updates;
 
 	void changeStat(std::string _statChange, bool _positive);
+
+
+	void gameOver();
 };
