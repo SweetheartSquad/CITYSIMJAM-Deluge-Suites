@@ -84,7 +84,7 @@
       "support": true,
       "aerial": true,
       "capacity": 0,
-      "cost": 50,
+      "cost": 25,
       "weight": -5,
       "generates":{
         "food":0,
