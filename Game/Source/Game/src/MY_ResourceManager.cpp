@@ -19,11 +19,13 @@ AssetBuilding::AssetBuilding(Json::Value _json, Scenario * const _scenario) :
 	generates.money = _json["generates"].get("money", 0).asFloat();
 
 	std::stringstream ss;
-	ss << (cost > 0 ? "-" : "+") << glm::abs(cost) << " money" << std::endl << (weight > 0 ? "-" : "+") << glm::abs(weight) << " buoyancy" << std::endl;
-	if(capacity > 0){
+	if(glm::abs(cost) > FLT_EPSILON){
+		ss << (cost > 0 ? "-" : "+") << glm::abs(cost) << " money" << std::endl;
+	}if(glm::abs(weight) > FLT_EPSILON){
+		ss << (weight > 0 ? "-" : "+") << glm::abs(weight) << " buoyancy" << std::endl;
+	}if(glm::abs(capacity) > 0){
 		ss << (capacity < 0 ? "-" : "+") << glm::abs(capacity) << " max tenants" << std::endl;
-	}
-	if(glm::abs(generates.food) > FLT_EPSILON){
+	}if(glm::abs(generates.food) > FLT_EPSILON){
 		ss << (generates.food < 0 ? "-" : "+") << glm::abs(generates.food) << " food/trip" << std::endl;
 	}if(glm::abs(generates.morale) > FLT_EPSILON){
 		ss << (generates.morale < 0 ? "-" : "+") << glm::abs(generates.morale) << " morale/trip" << std::endl;
