@@ -426,7 +426,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	for(auto & v : selectorThing->mesh->vertices){
 		v.alpha = 0.25f;
 	}
-	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing);
+	floors.at(currentFloor)->cellContainer->addChildAtIndex(selectorThing, 0);
 	
 
 
@@ -505,7 +505,7 @@ void MY_Scene_Main::update(Step * _step){
 	
 
 	for(unsigned long int i = 0; i < floors.size(); ++i){
-		floors.at(i)->updateVisibility(currentFloor + floodedFloors, angle);
+		floors.at(i)->updateVisibility(currentFloor + floodedFloors);
 	}
 	camPos.y += ((currentFloor + floodedFloors + foundationOffset) - gameCam->firstParent()->getTranslationVector().y)*0.1f;
 
@@ -623,6 +623,9 @@ void MY_Scene_Main::update(Step * _step){
 	mpos.x -= glm::mod(mpos.x, 2.f);
 	mpos.z -= glm::mod(mpos.z, 2.f);
 	uiLayer->mouseIndicator->firstParent()->translate(mpos, false);
+
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 }
 
 void MY_Scene_Main::pause(){
@@ -660,11 +663,11 @@ void MY_Scene_Main::updateStats(){
 }
 
 void MY_Scene_Main::setFloor(unsigned long int _floor){
+	floors.at(currentFloor)->cellContainer->removeChild(selectorThing->firstParent());
 	currentFloor = _floor;
 	
 	// update selector to the current floor
-	selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
-	floors.at(currentFloor)->wallContainerOpaque->addChild(selectorThing->firstParent());
+	floors.at(currentFloor)->cellContainer->addChild(selectorThing->firstParent(), false);
 		
 	// trigger animations
 	if(currentFloor != 0){
@@ -682,6 +685,7 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	FrameBufferInterface::pushFbo(screenFBO);
 
 	// render the scene
+	glEnable(GL_CULL_FACE);
 	_renderOptions->setViewPort(UI_PANEL_WIDTH,0,screenFBO->width - UI_PANEL_WIDTH, screenFBO->height);
 	float f = (1.f-(gameCam->firstParent()->getTranslationVector().y - waterPlane->firstParent()->getTranslationVector().y)/50.f) * (glm::sin(sweet::lastTimestamp*(1.f/gameplayTick->targetSeconds*3.f))*0.5f+1);
 	_renderOptions->setClearColour(bgColour.r*f, bgColour.g*f, bgColour.b*f,1);
@@ -694,7 +698,8 @@ void MY_Scene_Main::render(sweet::MatrixStack * _matrixStack, RenderOptions * _r
 	_renderOptions->setViewPort(0,0,screenFBO->width, screenFBO->height);
 	// render our screen framebuffer using the standard render surface
 	screenSurface->render(screenFBO->getTextureId());
-
+	
+	glDisable(GL_CULL_FACE);
 	// render the uiLayer after the screen surface in order to avoid hiding it through shader code
 	uiLayer->render(_matrixStack, _renderOptions);
 }
@@ -756,7 +761,7 @@ void MY_Scene_Main::placeBuilding(std::string _buildingType, glm::ivec3 _positio
 	const AssetBuilding * ab = MY_ResourceManager::getBuilding(_buildingType);
 	Building * b = new Building(ab, baseShader);
 	Floor * floor = floors.at(_position.y);
-	Transform * p = (ab->aerial ? floor->wallContainerOpaque : floor->cellContainer);
+	Transform * p = floor->cellContainer;//(ab->aerial ? floor->wallContainerOpaque : floor->cellContainer);
 	p->addChild(b)->translate(_position.x - GRID_SIZE_X/2.f - 1, 0, _position.z - GRID_SIZE_Z/2.f - 1, false);
 	floor->cells[_position.x][_position.z]->building = b;
 	
@@ -803,7 +808,7 @@ void MY_Scene_Main::removeBuilding(glm::ivec3 _position){
 	Cell * cell = getCell(_position);
 	if(cell->building != nullptr){
 		Floor * floor = floors.at(_position.y);
-		Transform * p = (cell->building->definition->aerial ? floor->wallContainerOpaque : floor->cellContainer);
+		Transform * p = floor->cellContainer;//(cell->building->definition->aerial ? floor->wallContainerOpaque : floor->cellContainer);
 		p->removeChild(cell->building->firstParent());
 		const AssetBuilding * ab = cell->building->definition;
 		
@@ -840,7 +845,7 @@ void MY_Scene_Main::placeFloor(){
 		}
 	}
 
-	floor->updateVisibility(currentFloor + floodedFloors, angle);
+	floor->updateVisibility(currentFloor + floodedFloors);
 }
 
 Cell * MY_Scene_Main::getCell(glm::ivec3 _position){
@@ -924,7 +929,7 @@ void MY_Scene_Main::floodFloor(){
 		}
 	}
 
-	floor->updateVisibility(floor->height+1,angle);
+	floor->updateVisibility(floor->height+1);
 	floors.erase(floors.begin());
 
 

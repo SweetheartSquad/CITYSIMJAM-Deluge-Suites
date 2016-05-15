@@ -15,7 +15,7 @@ public:
 
 class Floor : public Transform{
 public:
-	static TriMesh * wallT1, * wallT2, * wallO1, * wallO2;
+	static TriMesh * wallExterior, * wallInteriorTransparent, * wallInteriorOpaque;
 	static MeshInterface * floorPlane;
 	unsigned long int height;
 	std::vector<MeshEntity *> walls;
@@ -32,5 +32,5 @@ public:
 	Floor(unsigned long int _height, Shader * _shader);
 	~Floor();
 
-	void updateVisibility(unsigned long int _height, unsigned long int _angle);
+	void updateVisibility(unsigned long int _height);
 };

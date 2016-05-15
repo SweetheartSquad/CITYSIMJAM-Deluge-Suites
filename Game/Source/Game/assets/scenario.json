@@ -38,8 +38,12 @@
       "src": "wall.obj"
     },{
       "type": "texture",
-      "id": "wall",
-      "src": "wall.png"
+      "id": "wallExterior",
+      "src": "wallExterior.png"
+    },{
+      "type": "texture",
+      "id": "wallInterior",
+      "src": "wallInterior.png"
     },
 
     {

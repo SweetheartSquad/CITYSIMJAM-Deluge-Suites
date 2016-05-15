@@ -7,45 +7,32 @@
 #include <Timeout.h>
 
 MeshInterface * Floor::floorPlane = nullptr;
-TriMesh * Floor::wallO1 = nullptr;
-TriMesh * Floor::wallO2 = nullptr;
-TriMesh * Floor::wallT1 = nullptr;
-TriMesh * Floor::wallT2 = nullptr;
+TriMesh * Floor::wallInteriorOpaque = nullptr;
+TriMesh * Floor::wallInteriorTransparent = nullptr;
+TriMesh * Floor::wallExterior = nullptr;
 Floor::Floor(unsigned long int _height, Shader * _shader) : 
 	height(_height)
 {
-	if(wallT1 == nullptr){
-		wallO1 = new TriMesh(true);
-		wallO2 = new TriMesh(true);
-		wallT1 = new TriMesh(true);
-		wallT2 = new TriMesh(true);
-		wallO1->insertVertices(*MY_ResourceManager::globalAssets->getMesh("wall")->meshes.at(0));
-		wallO2->insertVertices(*wallO1);
-		wallT1->insertVertices(*wallO1);
-		wallT2->insertVertices(*wallO1);
+	if(wallInteriorOpaque == nullptr){
+		wallExterior = new TriMesh(true);
+		wallInteriorTransparent = new TriMesh(true);
+		wallInteriorOpaque = new TriMesh(true);
 
-		wallO1->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("wall")->texture);
-		wallO2->pushTexture2D(wallO1->textures.at(0));
-		wallT1->pushTexture2D(wallO1->textures.at(0));
-		wallT2->pushTexture2D(wallO1->textures.at(0));
-
-		for(auto & v : wallO1->vertices){
-			v.u *= GRID_SIZE_Z;
+		wallExterior->insertVertices(*MY_ResourceManager::globalAssets->getMesh("wall")->meshes.at(0));
+		for(auto & v : wallExterior->vertices){
 			v.x *= GRID_SIZE_X;
 			v.z *= GRID_SIZE_Z;
-		}for(auto & v : wallT1->vertices){
-			v.u *= GRID_SIZE_Z;
-			v.x *= GRID_SIZE_X;
-			v.z *= GRID_SIZE_Z;
-			v.alpha = 0.25f;
-		}for(auto & v : wallO2->vertices){
-			v.u *= GRID_SIZE_X;
-			v.x *= GRID_SIZE_Z;
-			v.z *= GRID_SIZE_X;
-		}for(auto & v : wallT2->vertices){
-			v.u *= GRID_SIZE_X;
-			v.x *= GRID_SIZE_Z;
-			v.z *= GRID_SIZE_X;
+		}
+
+		wallInteriorOpaque->insertVertices(*wallExterior);
+		std::reverse(wallInteriorOpaque->vertices.begin(),wallInteriorOpaque->vertices.end());
+		wallInteriorTransparent->insertVertices(*wallInteriorOpaque);
+
+		wallExterior->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("wallExterior")->texture);
+		wallInteriorOpaque->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("wallInterior")->texture);
+		wallInteriorTransparent->pushTexture2D(wallInteriorOpaque->textures.at(0));
+
+		for(auto & v : wallInteriorTransparent->vertices){
 			v.alpha = 0.25f;
 		}
 	}
@@ -67,16 +54,11 @@ Floor::Floor(unsigned long int _height, Shader * _shader) :
 	addChild(wallContainerTransparent,false);
 	addChild(wallContainerOpaque,false);
 
-	for(unsigned long int i = 0; i < 4; ++i){
-		MeshEntity * wall = new MeshEntity(i%2 == 0 ? wallO1 : wallO2, _shader);
-		wallContainerOpaque->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
-		walls.push_back(wall);
-		wall = new MeshEntity(i%2 == 0 ? wallT1 : wallT2, _shader);
-		wallContainerTransparent->addChild(wall)->rotate(i*90.f,0,1,0,kOBJECT);
-	}
-
 	MeshEntity * fp = new MeshEntity(floorPlane, _shader);
-	wallContainerOpaque->addChild(fp, false);
+	cellContainer->addChild(fp, false);
+	cellContainer->addChild(new MeshEntity(wallInteriorOpaque, _shader));
+	wallContainerOpaque->addChild(new MeshEntity(wallExterior, _shader));
+	wallContainerTransparent->addChild(new MeshEntity(wallInteriorTransparent, _shader));
 	
 	for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
 	for(unsigned long int z = 0; z < GRID_SIZE_Z+2; ++z){
@@ -113,21 +95,9 @@ Floor::~Floor(){
 }
 
 #define RANGE 10
-void Floor::updateVisibility(unsigned long int _height, unsigned long int _angle){
-	setVisible(glm::abs((float)_height - height) < RANGE);
+void Floor::updateVisibility(unsigned long int _height){
+	setVisible(glm::abs((float)_height - height) < RANGE); // cell visible within range
 	wallContainerTransparent->setVisible(_height < height || _height - height == RANGE-1); // transparent walls visible above current floor
-	wallContainerOpaque->setVisible(_height >= height && _height - height != RANGE-1); // opaque walls visible on current floor and below
+	wallContainerOpaque->setVisible(_height > height && _height - height != RANGE-1); // opaque walls visible on floor below
 	cellContainer->setVisible(_height == height); // cells visible on current floor
-
-	if(height == _height){
-		// adjust individual wall visibility on current floor based on angle
-		for(unsigned long int i = 0; i < walls.size(); ++i){
-			walls.at(i)->setVisible(i == _angle || i == _angle+1 || i == _angle-3);
-		}
-	}else{
-		// make all walls visible on other floors
-		for(auto wall : walls){
-			wall->setVisible(true);
-		}
-	}
 }
