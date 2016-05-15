@@ -956,8 +956,8 @@ void MY_Scene_Main::floodFloor(){
 	// lose functionality of all buildings on floor
 	// and a fraction of the weight
 	Floor * floor = floors.front();
-	for(unsigned long int x = 0; x < GRID_SIZE_X; ++x){
-	for(unsigned long int z = 0; z < GRID_SIZE_X; ++z){
+	for(unsigned long int x = 0; x < GRID_SIZE_X+2; ++x){
+	for(unsigned long int z = 0; z < GRID_SIZE_X+2; ++z){
 		const AssetBuilding * ab = floor->cells[x][z]->building->definition;
 		
 		weight -= ab->weight*getStat("floodedWeight");
