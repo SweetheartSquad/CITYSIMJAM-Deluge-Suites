@@ -96,7 +96,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	boat = new MeshEntity(MY_ResourceManager::globalAssets->getMesh("boat")->meshes.at(0), baseShader);
 	boat->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("boat")->texture);
 	childTransform->addChild(boat)->translate(16,0,0);
-	boat->childTransform->translate(0,0,-boat->mesh->calcBoundingBox().z);
+	boat->childTransform->translate(0,0,-boat->mesh->calcBoundingBox().z*1.5f);
 
 	buildingRoot = new Transform();
 	buildingRoot->translate(0, foundationOffset, 0);
@@ -141,6 +141,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	};auto btnOnOutOrUp = [btnTexNormal](sweet::Event * _event){
 		((NodeUI *)(_event->getIntData("target")))->background->mesh->replaceTextures(btnTexNormal);
 	};auto btnOnClick = [this, buildDescription](sweet::Event * _event){
+		MY_ResourceManager::globalAssets->getAudio("btn")->sound->setPitch(pow(2,sweet::NumberUtils::randomInt(1,13)/13.f));
+		MY_ResourceManager::globalAssets->getAudio("btn")->sound->play();
 		setType(((NodeUI *)(_event->getIntData("target")))->nodeName);
 		buildDescription->setText(currentType + ":\n" + MY_ResourceManager::getBuilding(currentType)->description);
 	};
@@ -284,6 +286,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lblMsg->setText(L"");
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
+		MY_ResourceManager::globalAssets->getAudio("plus")->sound->play();
 		++trips;
 		caravanTimer -= 1;
 		if(caravanTimer == 0){
@@ -350,6 +353,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 				floodFloor();
 			}
 			if(floodedFloors - oldFloodedFloors > 0){
+				MY_ResourceManager::globalAssets->getAudio("flood")->sound->play();
 				alert(std::to_wstring(floodedFloors - oldFloodedFloors) + L" floor" + (glm::abs(floodedFloors - oldFloodedFloors) > 1 ? L"s" : L"") + L" flooded!");
 				if(glm::abs(tenants - oldNumTenants) > FLT_EPSILON){
 					alert(std::to_wstring((int)glm::abs(tenants - oldNumTenants)) + L" tenant" + (glm::abs(tenants - oldNumTenants) > 1 ? L"s" : L"") + L" drowned");
@@ -515,7 +519,7 @@ void MY_Scene_Main::update(Step * _step){
 
 	float angleDif = ((angle+0.5f)*90.f - currentAngle);
 
-	currentAngle += angleDif * 0.1f;
+	currentAngle += angleDif * 0.25f;
 	gameCam->yaw = currentAngle;
 	gameCam->firstParent()->translate(camPos, false);
 
@@ -524,12 +528,16 @@ void MY_Scene_Main::update(Step * _step){
 	// rotate view
 	if(keyboard->keyJustDown(GLFW_KEY_LEFT) || keyboard->keyJustDown(GLFW_KEY_A)){
 		angle -= 1;
+		MY_ResourceManager::globalAssets->getAudio("turn")->sound->setPitch(pow(2,sweet::NumberUtils::randomInt(1,13)/13.f));
+		MY_ResourceManager::globalAssets->getAudio("turn")->sound->play();
 		if(angle < 0){
 			angle = 3;
 			currentAngle += 360.f;
 		}
 	}if(keyboard->keyJustDown(GLFW_KEY_RIGHT) || keyboard->keyJustDown(GLFW_KEY_D)){
 		angle += 1;
+		MY_ResourceManager::globalAssets->getAudio("turn")->sound->setPitch(pow(2,sweet::NumberUtils::randomInt(1,13)/13.f));
+		MY_ResourceManager::globalAssets->getAudio("turn")->sound->play();
 		if(angle > 3){
 			angle = 0;
 			currentAngle -= 360.f;
@@ -594,26 +602,19 @@ void MY_Scene_Main::update(Step * _step){
 					cursorPos.x >= 1 && cursorPos.x < GRID_SIZE_X+1 &&
 					cursorPos.z >= 1 && cursorPos.z < GRID_SIZE_Z+1;
 			}
-			if(validSpot){
-			
-				Cell * cell = getCell(cursorPos);
-
-				std::stringstream ss;
-				ss << "Clicked floor " << currentFloor << ", cell " << cursorPos.x << " " << cursorPos.z << std::endl;
-				ss << "cell type is " << cell->building->definition->id << ", user type is " << currentType;
-				Log::info(ss.str());
-
-				if(cell->building->definition->id != currentType && cell->building->definition->id != "blocked"){
-					if(cell->building->definition->empty || ab->empty){
-						placeBuilding(currentType, cursorPos, false);
-					}else{
-						alert(L"You can't place a building here.");
-					}
-				}else{
-					alert(L"You can't place a building here.");
-				}
+			Cell * cell = getCell(cursorPos);
+				if(
+					validSpot && (
+					cell->building->definition->id != currentType &&
+					cell->building->definition->id != "blocked" && (
+					cell->building->definition->empty ||
+					ab->empty))
+				){
+					placeBuilding(currentType, cursorPos, false);
+					MY_ResourceManager::globalAssets->getAudio("build")->sound->play();
 			}else{
 				alert(L"You can't place that building here.");
+				MY_ResourceManager::globalAssets->getAudio("build2")->sound->play();
 			}
 		}
 
@@ -649,6 +650,7 @@ void MY_Scene_Main::resume(){
 }
 
 void MY_Scene_Main::gameOver(){
+	MY_ResourceManager::globalAssets->getAudio("negative")->sound->play();
 	NodeUI * gameOverScreen = new NodeUI(uiLayer->world);
 	gameOverScreen->setRationalHeight(1.f, uiLayer);
 	gameOverScreen->setRationalWidth(1.f, uiLayer);
@@ -726,6 +728,8 @@ void MY_Scene_Main::setFloor(unsigned long int _floor){
 			floors.at(currentFloor-1)->boing->restart();
 		}
 		floors.at(currentFloor)->boing->restart();
+		MY_ResourceManager::globalAssets->getAudio("floor")->sound->setPitch(pow(2,sweet::NumberUtils::randomInt(1,13)/13.f));
+		MY_ResourceManager::globalAssets->getAudio("floor")->sound->play();
 	}
 }
 

@@ -243,5 +243,45 @@
       "src": "transparent.png"
     }
 
+
+
+    // audio
+    ,{
+      "type": "audio",
+      "id": "build",
+      "src": "build.wav"
+    },{
+      "type": "audio",
+      "id": "build2",
+      "src": "build2.wav"
+    },{
+      "type": "audio",
+      "id": "plus",
+      "src": "plus.wav"
+    },{
+      "type": "audio",
+      "id": "negative",
+      "src": "negative.wav"
+    },{
+      "type": "audio",
+      "id": "flood",
+      "src": "flood.wav"
+    },{
+      "type": "audio",
+      "id": "floor",
+      "src": "badum2.wav"
+    },{
+      "type": "audio",
+      "id": "turn",
+      "src": "vwoom.wav"
+    },{
+      "type": "audio",
+      "id": "btn",
+      "src": "btn.wav"
+    },{
+      "type": "audio",
+      "id": "bgm",
+      "src": "Deluge_Suites.ogg"
+    }
   ]
 }
