@@ -23,6 +23,8 @@ public:
 	StandardFrameBuffer * screenFBO;
 
 	OrthographicCamera * gameCam;
+	float shakeMult;
+	Timeout * camShake;
 
 	Transform * buildingRoot;
 	std::string currentType;

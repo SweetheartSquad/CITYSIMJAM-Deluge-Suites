@@ -69,6 +69,15 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	gameCam->pitch = -45;
 	gameCam->roll = 0;
 
+	camShake = new Timeout(0.25f, [this](sweet::Event * _event){
+		gameCam->firstParent()->translate(0,gameCam->firstParent()->getTranslationVector().y,0,false);
+	});
+	camShake->eventManager->addEventListener("progress", [this](sweet::Event * _event){
+		float p = 1.f-_event->getFloatData("progress");
+		gameCam->firstParent()->translate(sweet::NumberUtils::randomFloat(-1,1)*p*shakeMult,gameCam->firstParent()->getTranslationVector().y,sweet::NumberUtils::randomFloat(-1,1)*p*shakeMult,false);
+	});
+	childTransform->addChild(camShake, false);
+
 
 	// water
 	waterShader = new ComponentShaderBase(true);
@@ -354,6 +363,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 			}
 			if(floodedFloors - oldFloodedFloors > 0){
 				MY_ResourceManager::globalAssets->getAudio("flood")->sound->play();
+				shakeMult = 1;
+				camShake->restart();
 				alert(std::to_wstring(floodedFloors - oldFloodedFloors) + L" floor" + (glm::abs(floodedFloors - oldFloodedFloors) > 1 ? L"s" : L"") + L" flooded!");
 				if(glm::abs(tenants - oldNumTenants) > FLT_EPSILON){
 					alert(std::to_wstring((int)glm::abs(tenants - oldNumTenants)) + L" tenant" + (glm::abs(tenants - oldNumTenants) > 1 ? L"s" : L"") + L" drowned");
@@ -615,6 +626,8 @@ void MY_Scene_Main::update(Step * _step){
 			}else{
 				alert(L"You can't place that building here.");
 				MY_ResourceManager::globalAssets->getAudio("build2")->sound->play();
+				shakeMult = 0.25f;
+				camShake->restart();
 			}
 		}
 
@@ -622,6 +635,8 @@ void MY_Scene_Main::update(Step * _step){
 		if(tenants == 0 || floors.size() == 0){
 			pause();
 			gameOver();
+			shakeMult = 2.f;
+			camShake->restart();
 		}
 	}
 
