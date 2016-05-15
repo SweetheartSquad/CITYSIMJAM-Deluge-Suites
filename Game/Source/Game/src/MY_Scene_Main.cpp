@@ -389,6 +389,18 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 
 	update(&sweet::step);
 	pause();
+
+
+	NodeUI * tutorial = new NodeUI(uiLayer->world);
+	uiLayer->addChild(tutorial);
+	tutorial->setRationalWidth(1.f, uiLayer);
+	tutorial->setRationalHeight(1.f, uiLayer);
+	tutorial->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("tutorial")->texture);
+	tutorial->setMouseEnabled(true);
+	tutorial->eventManager->addEventListener("click", [this, tutorial](sweet::Event * _event){
+		tutorial->setVisible(false);
+		resume();
+	});
 }
 
 MY_Scene_Main::~MY_Scene_Main(){
