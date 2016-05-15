@@ -506,7 +506,7 @@ void MY_Scene_Main::update(Step * _step){
 		// move water visual upwards to match actual water level
 		waterPlane->firstParent()->translate(0,glm::min(0.005f, glm::max(0.f, waterLevel + foundationOffset - 0.4f) - waterPlane->firstParent()->getTranslationVector().y),0);
 
-		if(mouse->leftJustPressed()){
+		if(mouse->leftJustPressed() && mouse->mouseX() > UI_PANEL_WIDTH){
 			const AssetBuilding * ab = MY_ResourceManager::getBuilding(currentType);
 			// make sure the cursor is within bounds
 			cursorPos += glm::ivec3(1,0,1);
