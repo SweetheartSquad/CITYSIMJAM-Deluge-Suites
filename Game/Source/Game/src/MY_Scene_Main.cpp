@@ -426,7 +426,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	for(auto & v : selectorThing->mesh->vertices){
 		v.alpha = 0.25f;
 	}
-	floors.at(currentFloor)->cellContainer->addChildAtIndex(selectorThing, 0);
+	floors.at(currentFloor)->cellContainer->addChild(selectorThing);
 	
 
 
@@ -678,7 +678,7 @@ void MY_Scene_Main::updateStats(){
 }
 
 void MY_Scene_Main::setFloor(unsigned long int _floor){
-	floors.at(currentFloor)->cellContainer->removeChild(selectorThing->firstParent());
+	selectorThing->firstParent()->firstParent()->removeChild(selectorThing->firstParent());
 	currentFloor = _floor;
 	
 	// update selector to the current floor
