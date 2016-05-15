@@ -69,6 +69,7 @@ MY_Scene_Base::~MY_Scene_Base(){
 void MY_Scene_Base::update(Step * _step){
 	controller->update(_step);
 
+#ifdef _DEBUG
 	// basic debugging controls
 	if(keyboard->keyJustDown(GLFW_KEY_ESCAPE)){
 		// if the user hits escape on the menu, exit the game
@@ -83,6 +84,7 @@ void MY_Scene_Base::update(Step * _step){
 	}if(keyboard->keyJustDown(GLFW_KEY_2)){
 		toggleDebug();
 	}
+#endif
 
 	glm::uvec2 sd = sweet::getWindowDimensions();
 	uiLayer->resize(0, sd.x, 0, sd.y);

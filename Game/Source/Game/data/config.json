@@ -24,7 +24,7 @@
 	"windowResizable": false,
 	"windowDecorated": true,
 	
-	"rngSeed": 0,
+	"rngSeed": -1,
 	"nodeCounting": false,
 	"useLibOVR": false
 }

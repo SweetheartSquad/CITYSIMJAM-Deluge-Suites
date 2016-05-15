@@ -499,7 +499,7 @@ void MY_Scene_Main::update(Step * _step){
 	}
 
 	
-	
+#ifdef _DEBUG
 	if(keyboard->keyJustDown(GLFW_KEY_L)){
 		screenSurfaceShader->unload();
 		screenSurfaceShader->loadFromFile(screenSurfaceShader->vertSource, screenSurfaceShader->fragSource);
@@ -513,6 +513,7 @@ void MY_Scene_Main::update(Step * _step){
 			resume();
 		}
 	}
+#endif
 
 	// resize camera to fit width-wise and maintain aspect ratio height-wise
 	glm::uvec2 sd = sweet::getWindowDimensions();
