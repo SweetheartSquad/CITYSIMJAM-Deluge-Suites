@@ -226,6 +226,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lbl->decimals = 0;
 	lbl->setHeight(10);
 	lbl->setWidth(32);
+	lbl->setText("1");
 	TextLabelControlled * lbl2 = new TextLabelControlled(&capacity, 0, FLT_MAX, uiLayer->world, font, textShader);
 	hl->addChild(lbl2);
 	lbl2->setRenderMode(kTEXTURE);
