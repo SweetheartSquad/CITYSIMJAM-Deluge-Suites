@@ -20,6 +20,9 @@
 	"generateMipmapsDefault": false,
 	"scaleModeMagDefault": "GL_NEAREST",
 	"scaleModeMinDefault": "GL_NEAREST",
+
+	"windowResizable": false,
+	"windowDecorated": true,
 	
 	"rngSeed": 0,
 	"nodeCounting": true,
