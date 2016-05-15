@@ -44,7 +44,8 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	tenants(0),
 	waterLevel(0),
 	caravanTimer(3),
-	floodedFloors(0)
+	floodedFloors(0),
+	trips(0)
 {
 	// load stats from file
 	Json::Reader reader;
@@ -127,7 +128,7 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	buildDescription->setWrapMode(kWORD);
 	buildDescription->setRenderMode(kTEXTURE);
 	buildDescription->verticalAlignment = kTOP;
-	buildDescription->setText("Lorem ipsem dolor sit amet. Blah blhhadi wajd woadjw iadjowa jdwad jwaodjwaiodj awidoj awodj waij");
+	buildDescription->setText(L"");
 	buildDescription->setMouseEnabled(true);
 
 	Texture * btnTexNormal = MY_ResourceManager::globalAssets->getTexture("btn-normal")->texture;
@@ -280,9 +281,10 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	lblMsg->setWrapMode(kWORD);
 	lblMsg->setRenderMode(kTEXTURE);
 	lblMsg->verticalAlignment = kTOP;
-	lblMsg->setText("Lorem ipsem dolor sit amet. Blah blhhadi wajd woadjw iadjowa jdwad jwaodjwaiodj awidoj awodj waij");
+	lblMsg->setText(L"");
 
 	gameplayTick = new Timeout(getStat("tickDuration"), [this](sweet::Event * _event){
+		++trips;
 		caravanTimer -= 1;
 		if(caravanTimer == 0){
 			caravanTimer = getStat("caravans.delay");
@@ -432,11 +434,17 @@ MY_Scene_Main::MY_Scene_Main(Game * _game) :
 	uiLayer->addChild(tutorial);
 	tutorial->setRationalWidth(1.f, uiLayer);
 	tutorial->setRationalHeight(1.f, uiLayer);
-	tutorial->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("tutorial")->texture);
+	tutorial->background->mesh->pushTexture2D(MY_ResourceManager::globalAssets->getTexture("tutorial-1")->texture);
 	tutorial->setMouseEnabled(true);
+	static int t = 1;
 	tutorial->eventManager->addEventListener("click", [this, tutorial](sweet::Event * _event){
-		tutorial->setVisible(false);
-		resume();
+		tutorial->background->mesh->replaceTextures(MY_ResourceManager::globalAssets->getTexture("tutorial-"+std::to_string(++t))->texture);
+		if(t == 4){
+			tutorial->setVisible(false);
+			tutorial->setMouseEnabled(false);
+			tutorial->active = false;
+			resume();
+		}
 	});
 
 	uiLayer->addMouseIndicator();

@@ -35,6 +35,8 @@ public:
 	// the floor which the player is looking at
 	int currentFloor;
 	int floodedFloors;
+	// number of trips the boat has made
+	unsigned long int trips;
 	int angle;
 	float currentAngle;
 	glm::vec3 bgColour;

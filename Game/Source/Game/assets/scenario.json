@@ -100,17 +100,28 @@
     },
     {
       "type":"texture",
-      "id":"tutorial",
-      "src":"tutorial.png"
-    },
-    {
-      "type":"texture",
       "id":"arrow-up",
       "src":"arrow-up.png"
     },{
       "type":"texture",
       "id":"arrow-down",
       "src":"arrow-down.png"
+    },
+
+    {
+      "type":"texture",
+      "id":"tutorial-1",
+      "src":"tutorial-1.png"
+    },
+    {
+      "type":"texture",
+      "id":"tutorial-2",
+      "src":"tutorial-2.png"
+    },
+    {
+      "type":"texture",
+      "id":"tutorial-3",
+      "src":"tutorial-3.png"
     },
 
 
